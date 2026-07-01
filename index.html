@@ -186,7 +186,7 @@
             <p class="who">Ce que le gérant de salon voit. La surface la plus soignée — c'est le produit qu'il touche au quotidien.</p>
 
             <!-- composant transverse (ex-B2) -->
-            <div class="comp" style="--z:var(--gerant)"><div class="id">◇ composant transverse</div><div class="ti">Sélecteur de salon actif</div><div class="de">« Je commande pour → salon X », présent en permanence (accueil, catalogue, checkout). <b>Pas un écran</b> : un composant réutilisé partout. ⚠️ règle métier à figer : le panier se vide-t-il au changement de salon, ou est-il scindé par salon ?</div><span class="badge">à spécifier avant design</span></div>
+            <div class="comp" style="--z:var(--gerant)"><div class="id">◇ composant transverse</div><div class="ti">Sélecteur de salon actif</div><div class="de">« Je commande pour → salon X », présent en permanence (accueil, catalogue, checkout). <b>Pas un écran</b> : un composant réutilisé partout. ✅ <b>Un panier PAR salon</b> (scindé) : changer de salon ne vide rien, chaque salon garde son panier. Bandeau « panier en cours pour [salon] » au changement.</div><span class="badge">tranché · panier par salon</span></div>
 
             <div class="grp">
               <div class="grp-t">Contexte salon</div>
@@ -207,7 +207,7 @@
               <div class="scr"><div class="id">B8</div><div class="ti">Historique (filtre salon)</div><div class="de">Commandes filtrables par salon / période : statut, montant.</div><span class="tag">CDC / ARCHI</span></div>
               <div class="scr"><div class="id">B9</div><div class="ti">Détail commande + tracking</div><div class="de">Lignes, statut fournisseur (même state machine que C6), n° de suivi, facture PDF. ⚠️ tracking dropshipping = pas garanti temps réel.</div><span class="tag">CDC / ARCHI</span></div>
               <div class="scr key"><div class="id">B10</div><div class="ti">Réassort / recommander (1 clic)</div><div class="de">Réitérer une commande passée en un clic (+ réassort suggéré).</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr"><div class="id">B11</div><div class="ti">SAV / retour / avoir</div><div class="de">Signaler produit cassé / manquant / erroné → retour ou avoir. ⚠️ total vs partiel = à trancher (Q17) avant de dessiner.</div><span class="tag">À TRANCHER Q17</span></div>
+              <div class="scr"><div class="id">B11</div><div class="ti">SAV / retour / avoir</div><div class="de">Signaler produit cassé / manquant / erroné → retour ou avoir. ✅ <b>Retour PARTIEL par ligne</b> : le gérant sélectionne la/les ligne(s) et la quantité concernée (une commande = plusieurs réf. ; le total = tout coché).</div><span class="tag">CDC · tranché partiel</span></div>
             </div>
 
             <div class="grp">
@@ -304,13 +304,13 @@
             </ul>
           </div>
           <div class="col">
-            <h3>À trancher AVANT de briefer le designer</h3>
+            <h3>Décisions actées (tranchées avec Kevin)</h3>
             <ul>
-              <li>✅ <b>Catalogue produit → Shopify Admin</b> (tranché — pas d'écran Store).</li>
-              <li>✅ <b>Click & collect</b> : le front d'achat = Capsule/Cosmétique, mais le <b>versant salon (colis à remettre) EST dans Store</b> (B14/B15, accès gérant+barber).</li>
-              <li><b>SAV / retours (B11, Q17)</b> : total ou partiel — l'écran se dessine différemment.</li>
-              <li><b>Comportement panier</b> au changement de salon actif (vidé / conservé / par salon).</li>
-              <li><b>Admin comptes/salons</b> (3 écrans) réintégrés seulement si <b>Inside</b> n'est finalement pas prêt.</li>
+              <li>✅ <b>Catalogue produit → Shopify Admin</b> (pas d'écran Store).</li>
+              <li>✅ <b>Click & collect</b> : front d'achat = Capsule/Cosmétique, mais le <b>versant salon (colis à remettre) EST dans Store</b> (B14/B15, gérant+barber).</li>
+              <li>✅ <b>SAV / retours → partiel par ligne</b> (le total = tout coché).</li>
+              <li>✅ <b>Panier → un par salon</b> (scindé, jamais vidé au changement) + bandeau.</li>
+              <li>⚠️ <b>Admin comptes/salons</b> (3 écrans) : réintégrés seulement si <b>Inside</b> n'est finalement pas prêt (seul point encore ouvert).</li>
             </ul>
           </div>
           <div class="col">
