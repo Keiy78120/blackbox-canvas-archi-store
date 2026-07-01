@@ -35,7 +35,7 @@
   #stage{position:absolute;inset:60px 0 0 0;overflow:hidden;cursor:grab}
   #stage.drag{cursor:grabbing}
   #world{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform}
-  .board{position:relative;padding:54px 60px 80px;width:2440px}
+  .board{position:relative;padding:54px 60px 80px;width:2560px}
   .board h1{font-size:15px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);
     font-weight:700;margin:0 0 4px}
   .board .sub{color:var(--muted);font-size:13px;margin:0 0 34px;max-width:820px;line-height:1.5}
@@ -96,6 +96,28 @@
   .st .ti{font-size:12.5px;font-weight:700;color:var(--ink);margin:0 0 4px}
   .st .on{font-family:var(--mono);font-size:9.5px;color:var(--state);letter-spacing:.05em}
   .st .de{font-size:11px;color:var(--muted);line-height:1.4;margin-top:4px}
+  /* auth flow band */
+  .flow{margin:30px 8px 0;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--auth);
+    border-radius:16px;padding:20px 22px 24px}
+  .flow-h{display:flex;align-items:baseline;gap:10px;margin:0 0 4px}
+  .flow-h .n{font-size:15px;font-weight:800}
+  .flow-h .k{font-family:var(--mono);font-size:11px;color:var(--auth);letter-spacing:.1em}
+  .flow .lead{color:var(--muted);font-size:12px;margin:6px 0 20px;max-width:1000px;line-height:1.5}
+  .flow .lead b{color:var(--ink)}
+  .flow-row{display:flex;align-items:stretch;gap:0;flex-wrap:nowrap}
+  .step{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:13px;padding:13px 14px;position:relative}
+  .step .num{position:absolute;top:-10px;left:14px;width:22px;height:22px;border-radius:50%;background:var(--auth);
+    color:#0b0c0e;font-weight:800;font-size:11px;display:grid;place-items:center;font-family:var(--mono)}
+  .step .actor{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;margin:6px 0 6px;font-weight:700}
+  .step.g .actor{color:var(--gerant)} .step.b .actor{color:var(--auth)} .step.k .actor{color:var(--office)}
+  .step .ti{font-size:13px;font-weight:700;margin:0 0 5px}
+  .step .de{font-size:11px;color:var(--muted);line-height:1.45}
+  .step .de b{color:var(--ink)}
+  .step .ref{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:9px;color:var(--dim);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+  .arrow{flex:0 0 34px;display:grid;place-items:center;color:var(--dim);font-size:20px}
+  .flow-note{margin-top:16px;padding:10px 14px;border:1px dashed var(--line-strong);border-radius:10px;
+    font-size:11.5px;color:var(--muted);line-height:1.5;max-width:1000px}
+  .flow-note b{color:var(--ink)}
   /* zoom controls */
   .zc{position:fixed;right:18px;bottom:18px;z-index:20;display:flex;gap:8px}
   .zc button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--panel);
@@ -141,25 +163,26 @@
     <div id="world">
       <div class="board">
         <h1>BLACKBOX Store</h1>
-        <p class="sub">Plateforme B2B de réassort des salons. <b>KHube (Office D-Studio) pilote l'interface</b>, Shopify est le moteur caché — <b>pas de checkout Shopify côté Store</b> (paiement Stripe orchestré par KHube). <b>~25 écrans cadre</b> + composants transverses + une bande d'états critiques à maquetter.</p>
+        <p class="sub">Plateforme B2B de réassort des salons. <b>KHube (Office D-Studio) pilote l'interface</b>, Shopify est le moteur caché — <b>pas de checkout Shopify côté Store</b> (paiement Stripe orchestré par KHube). <b>~27 écrans cadre</b> + composants transverses + une bande d'états critiques + le flow d'auth barber.</p>
 
         <div class="cols">
 
           <!-- ============ AUTH ============ -->
           <section class="zone" style="--z:var(--auth)">
-            <div class="zone-h"><span class="k">A</span><span class="n">Auth</span><span class="count">3 écrans</span></div>
+            <div class="zone-h"><span class="k">A</span><span class="n">Auth</span><span class="count">4 écrans</span></div>
             <p class="who">Transverse. La porte d'entrée : accès restreint aux gérants, par matricule.</p>
 
             <div class="grp">
               <div class="scr key"><div class="id">A1</div><div class="ti">Login matricule</div><div class="de">Matricule + secret. Auth KHube (Better Auth). <b>2 rôles</b> : <b>gérant</b> (accès complet) · <b>barber</b> (accès restreint aux retraits colis B14/B15, rien d'autre).</div><span class="tag">CDC / ARCHI</span></div>
               <div class="scr"><div class="id">A2</div><div class="ti">États d'accès (refus)</div><div class="de">Matricule inconnu · compte suspendu · salon fermé · pas de droit de commander → refus explicite.</div><span class="tag">FLUX</span></div>
               <div class="scr key"><div class="id">A3</div><div class="ti">1ère connexion — mandat Stripe</div><div class="de">Mise en place du mandat de prélèvement (SEPA/carte) <b>avant</b> toute commande. Obligatoire. ⚠️ délai de validation SEPA (voir états).</div><span class="tag">CDC / ARCHI</span></div>
+              <div class="scr key"><div class="id">A4</div><div class="ti">Activation compte barber</div><div class="de">Sur invitation du gérant. Vérif « la totale » : <b>matricule (Inside) + code d'invitation + OTP SMS</b> → définit son secret → accès activé, scopé au salon. Voir flow ci-dessous.</div><span class="tag">FLOW barber</span></div>
             </div>
           </section>
 
           <!-- ============ FRONT GERANT ============ -->
           <section class="zone" style="--z:var(--gerant)">
-            <div class="zone-h"><span class="k">B</span><span class="n">Front gérant</span><span class="count">13 écrans</span></div>
+            <div class="zone-h"><span class="k">B</span><span class="n">Front gérant</span><span class="count">14 écrans</span></div>
             <p class="who">Ce que le gérant de salon voit. La surface la plus soignée — c'est le produit qu'il touche au quotidien.</p>
 
             <!-- composant transverse (ex-B2) -->
@@ -195,6 +218,7 @@
             <div class="grp">
               <div class="grp-t">Retraits clients au salon · pont phygital</div>
               <div class="comp" style="--z:var(--gerant)"><div class="id">◇ accès</div><div class="ti">Gérant + barber (accès allégé)</div><div class="de">Le gérant n'est pas toujours là : un <b>barber</b> peut remettre les colis via son <b>matricule</b> — accès restreint à B14/B15 <b>uniquement</b> (ni catalogue, ni prix, ni paiement). Données via <b>API KHube</b> (source de vérité du retrait).</div><span class="badge">rôle allégé</span></div>
+              <div class="scr key"><div class="id">B16</div><div class="ti">Mon équipe (gérant)</div><div class="de">Le gérant <b>invite ses barbers</b> et les rattache à ses salons : liste équipe par salon, statut invitation (en attente / actif / expiré), activer/désactiver un accès. C'est l'invitation qui crée le droit d'accès (jamais l'auto-inscription).</div><span class="tag">FLOW barber</span></div>
               <div class="scr key"><div class="id">B14</div><div class="ti">Colis clients à remettre</div><div class="de">Colis <b>Capsule / Cosmétique</b> arrivés au salon (retrait client). Client, n° commande, date d'arrivée, statut (à remettre / remis / retard J+3 · J+7).</div><span class="tag">CDC (interface salon)</span></div>
               <div class="scr"><div class="id">B15</div><div class="ti">Détail colis + remise</div><div class="de">Vérif code / identité de retrait → marquer « remis au client » → déclenche la notif « retrait effectué ».</div><span class="tag">CDC (interface salon)</span></div>
             </div>
@@ -248,6 +272,24 @@
           </div>
         </section>
 
+        <!-- ====== FLOW AUTH BARBER ====== -->
+        <section class="flow">
+          <div class="flow-h"><span class="k">⟶</span><span class="n">Flow d'auth — Barber (rattachement à un salon)</span><span class="count" style="--z:var(--auth)">A4 + B16</span></div>
+          <p class="lead">Un barber n'a <b>pas</b> de compte Store à l'origine et ne peut <b>jamais s'auto-inscrire</b>. Son appartenance à un salon (donc à un gérant/franchise) est <b>créée par l'invitation du gérant</b>. Les données identité viennent de <b>BLACKBOX Inside</b> (le siège les détient) mais <b>l'API/le câblage Inside est à notre charge</b> (D-Studio) → le flow fonctionne même sans Inside prêt, et se synchronise avec quand l'API sera branchée.</p>
+
+          <div class="flow-row">
+            <div class="step g"><span class="num">1</span><div class="actor">Gérant · Store</div><div class="ti">Invite le barber</div><div class="de">Depuis « Mon équipe » : saisit nom + <b>matricule</b>, choisit le/les <b>salon(s)</b> de rattachement. KHube crée un compte barber « en attente », rôle restreint.</div><span class="ref">B16</span></div>
+            <div class="arrow">→</div>
+            <div class="step k"><span class="num">2</span><div class="actor">KHube · API</div><div class="ti">Émet l'invitation</div><div class="de">Envoie lien + code par <b>SMS/email</b> (Twilio/Resend). [Rapprochement auto avec les données <b>Inside</b> quand l'API sera branchée.]</div><span class="ref">API KHube</span></div>
+            <div class="arrow">→</div>
+            <div class="step b"><span class="num">3</span><div class="actor">Barber · 1ère fois</div><div class="ti">Active son espace</div><div class="de">Ouvre le lien → vérif « la totale » : <b>matricule + code d'invitation + OTP SMS</b> → définit son secret. Il n'active QUE ce à quoi il a été invité.</div><span class="ref">A4</span></div>
+            <div class="arrow">→</div>
+            <div class="step b"><span class="num">4</span><div class="actor">Barber · connecté</div><div class="ti">Accès allégé</div><div class="de">Voit <b>uniquement</b> les colis à remettre (B14/B15) de <b>son/ses salon(s)</b>. Ni catalogue, ni prix, ni paiement.</div><span class="ref">B14 · B15</span></div>
+          </div>
+
+          <div class="flow-note">🔑 <b>Le droit d'accès = l'invitation, pas la déclaration.</b> Le barber appartient à un salon <b>parce que le gérant l'a rattaché</b> — l'identité peut venir d'Inside, mais le droit est créé par KHube. Connexions suivantes : matricule + secret (ou OTP) → direct sur les colis de son salon. Désactivation possible par le gérant (barber qui quitte le salon).</div>
+        </section>
+
         <div class="engine" style="--z:var(--office)">
           🔒&nbsp;<span><b>Shopify = moteur caché.</b> Catalogue, commande, taxes, paiement réglementé restent Shopify, <b>invisibles pour le gérant</b>. <b>✅ Décision : la gestion du catalogue produit (créer/éditer produit, prix, variantes) se fait dans Shopify Admin</b> — pas d'écran catalogue à dessiner. vkode-office ne gère que le métier que Shopify ne connaît pas : <b>mapping fournisseur (C5), dropshipping, salons, prélèvements</b>.</span>
         </div>
@@ -274,8 +316,8 @@
           <div class="col">
             <h3>Budget designer recommandé</h3>
             <ul>
-              <li><b>~25 écrans cadre</b> + <b>~7 frames d'états</b> listés ci-dessus + variantes mobile des écrans clés.</li>
-              <li>Ordre de grandeur honnête : <b>≈ 35–38 frames</b> pour une V1 complète (parcours + états).</li>
+              <li><b>~27 écrans cadre</b> + <b>~7 frames d'états</b> + le flow barber (A4/B16) + variantes mobile des écrans clés.</li>
+              <li>Ordre de grandeur honnête : <b>≈ 37–40 frames</b> pour une V1 complète (parcours + états).</li>
             </ul>
           </div>
         </div>
