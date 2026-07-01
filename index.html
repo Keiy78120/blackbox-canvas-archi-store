@@ -141,7 +141,7 @@
     <div id="world">
       <div class="board">
         <h1>BLACKBOX Store</h1>
-        <p class="sub">Plateforme B2B de réassort des salons. <b>KHube (Office D-Studio) pilote l'interface</b>, Shopify est le moteur caché — <b>pas de checkout Shopify côté Store</b> (paiement Stripe orchestré par KHube). <b>~23 écrans cadre</b> + un composant transverse + une bande d'états critiques à maquetter.</p>
+        <p class="sub">Plateforme B2B de réassort des salons. <b>KHube (Office D-Studio) pilote l'interface</b>, Shopify est le moteur caché — <b>pas de checkout Shopify côté Store</b> (paiement Stripe orchestré par KHube). <b>~25 écrans cadre</b> + composants transverses + une bande d'états critiques à maquetter.</p>
 
         <div class="cols">
 
@@ -151,7 +151,7 @@
             <p class="who">Transverse. La porte d'entrée : accès restreint aux gérants, par matricule.</p>
 
             <div class="grp">
-              <div class="scr key"><div class="id">A1</div><div class="ti">Login matricule</div><div class="de">Matricule + secret, message d'accès restreint gérants. Auth KHube (Better Auth).</div><span class="tag">CDC / ARCHI</span></div>
+              <div class="scr key"><div class="id">A1</div><div class="ti">Login matricule</div><div class="de">Matricule + secret. Auth KHube (Better Auth). <b>2 rôles</b> : <b>gérant</b> (accès complet) · <b>barber</b> (accès restreint aux retraits colis B14/B15, rien d'autre).</div><span class="tag">CDC / ARCHI</span></div>
               <div class="scr"><div class="id">A2</div><div class="ti">États d'accès (refus)</div><div class="de">Matricule inconnu · compte suspendu · salon fermé · pas de droit de commander → refus explicite.</div><span class="tag">FLUX</span></div>
               <div class="scr key"><div class="id">A3</div><div class="ti">1ère connexion — mandat Stripe</div><div class="de">Mise en place du mandat de prélèvement (SEPA/carte) <b>avant</b> toute commande. Obligatoire. ⚠️ délai de validation SEPA (voir états).</div><span class="tag">CDC / ARCHI</span></div>
             </div>
@@ -159,7 +159,7 @@
 
           <!-- ============ FRONT GERANT ============ -->
           <section class="zone" style="--z:var(--gerant)">
-            <div class="zone-h"><span class="k">B</span><span class="n">Front gérant</span><span class="count">11 écrans</span></div>
+            <div class="zone-h"><span class="k">B</span><span class="n">Front gérant</span><span class="count">13 écrans</span></div>
             <p class="who">Ce que le gérant de salon voit. La surface la plus soignée — c'est le produit qu'il touche au quotidien.</p>
 
             <!-- composant transverse (ex-B2) -->
@@ -190,6 +190,13 @@
             <div class="grp">
               <div class="grp-t">Compte gérant</div>
               <div class="scr"><div class="id">B12</div><div class="ti">Mon compte (onglets)</div><div class="de">Un écran à onglets : <b>Mandat & prélèvements</b> (Stripe) · <b>Factures</b> (Stripe Invoicing) · <b>Adresses salon</b> · coordonnées. (fusion B12+B13)</div><span class="tag">CDC / ARCHI</span></div>
+            </div>
+
+            <div class="grp">
+              <div class="grp-t">Retraits clients au salon · pont phygital</div>
+              <div class="comp" style="--z:var(--gerant)"><div class="id">◇ accès</div><div class="ti">Gérant + barber (accès allégé)</div><div class="de">Le gérant n'est pas toujours là : un <b>barber</b> peut remettre les colis via son <b>matricule</b> — accès restreint à B14/B15 <b>uniquement</b> (ni catalogue, ni prix, ni paiement). Données via <b>API KHube</b> (source de vérité du retrait).</div><span class="badge">rôle allégé</span></div>
+              <div class="scr key"><div class="id">B14</div><div class="ti">Colis clients à remettre</div><div class="de">Colis <b>Capsule / Cosmétique</b> arrivés au salon (retrait client). Client, n° commande, date d'arrivée, statut (à remettre / remis / retard J+3 · J+7).</div><span class="tag">CDC (interface salon)</span></div>
+              <div class="scr"><div class="id">B15</div><div class="ti">Détail colis + remise</div><div class="de">Vérif code / identité de retrait → marquer « remis au client » → déclenche la notif « retrait effectué ».</div><span class="tag">CDC (interface salon)</span></div>
             </div>
           </section>
 
@@ -237,6 +244,7 @@
             <div class="st"><div class="ti">Rupture fournisseur (côté gérant)</div><div class="on">sur B9</div><div class="de">Aujourd'hui la rupture n'est traitée que côté back-office (C7). Que voit le gérant ? Bandeau « retard fournisseur » + alerte.</div></div>
             <div class="st"><div class="ti">1ère commande / dashboard vide</div><div class="on">sur B1</div><div class="de">Le tout premier écran après le mandat, sans historique : oriente vers le catalogue au lieu d'un dashboard vide.</div></div>
             <div class="st"><div class="ti">Centre d'alertes gérant</div><div class="on">panneau sur B1</div><div class="de">Vue centralisée « commande retardée / mandat à renouveler / avoir émis » — le gérant revient peu souvent, il ne doit pas découvrir un incident par hasard.</div></div>
+            <div class="st"><div class="ti">Colis client en retard (>J+7)</div><div class="on">sur B14</div><div class="de">Colis non retiré après J+7 : l'alerte « à traiter » que le CDC prévoit côté salon (relance client ou retour).</div></div>
           </div>
         </section>
 
@@ -250,13 +258,14 @@
             <ul>
               <li><b>A1</b> login → <b>A3</b> mandat (1ʳᵉ fois) → <b>B1</b> mes salons → <i>[choisir salon]</i> → <b>B3</b> catalogue → <b>B5</b> panier → <b>B6</b> checkout → <b>B7</b> confirmation → <b>B9</b> suivi.</li>
               <li>Réassort récurrent : <b>B1</b> → <b>B10</b> (recommander en 1 clic).</li>
+              <li>Retrait client (phygital) : colis Capsule/Cosmétique arrive au salon → <b>B14</b> liste → <b>B15</b> remise (gérant <b>ou barber</b>) → notif client. Via API KHube.</li>
             </ul>
           </div>
           <div class="col">
             <h3>À trancher AVANT de briefer le designer</h3>
             <ul>
               <li>✅ <b>Catalogue produit → Shopify Admin</b> (tranché — pas d'écran Store).</li>
-              <li>✅ <b>Click & collect (retrait salon) → Capsule uniquement</b> (tranché — hors périmètre Store : le gérant se fait livrer au salon, il ne « retire » pas).</li>
+              <li>✅ <b>Click & collect</b> : le front d'achat = Capsule/Cosmétique, mais le <b>versant salon (colis à remettre) EST dans Store</b> (B14/B15, accès gérant+barber).</li>
               <li><b>SAV / retours (B11, Q17)</b> : total ou partiel — l'écran se dessine différemment.</li>
               <li><b>Comportement panier</b> au changement de salon actif (vidé / conservé / par salon).</li>
               <li><b>Admin comptes/salons</b> (3 écrans) réintégrés seulement si <b>Inside</b> n'est finalement pas prêt.</li>
@@ -265,8 +274,8 @@
           <div class="col">
             <h3>Budget designer recommandé</h3>
             <ul>
-              <li><b>~23 écrans cadre</b> + <b>~6 frames d'états</b> listés ci-dessus + variantes mobile des écrans clés.</li>
-              <li>Ordre de grandeur honnête : <b>≈ 33–35 frames</b> pour une V1 complète (parcours + états).</li>
+              <li><b>~25 écrans cadre</b> + <b>~7 frames d'états</b> listés ci-dessus + variantes mobile des écrans clés.</li>
+              <li>Ordre de grandeur honnête : <b>≈ 35–38 frames</b> pour une V1 complète (parcours + états).</li>
             </ul>
           </div>
         </div>
