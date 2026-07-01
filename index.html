@@ -82,6 +82,25 @@
 </style>
 </head>
 <body>
+  <!-- PIN gate — dissuasif (le vrai rempart = repo privé + lien non deviné). ponytail: pas de crypto, juste un mur d'entrée -->
+  <div id="gate" style="position:fixed;inset:0;z-index:100;background:#0b0c0e;display:grid;place-items:center;font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+    <div style="text-align:center;max-width:320px;padding:0 24px">
+      <svg viewBox="0 0 178 178" style="width:34px;height:34px;margin-bottom:22px" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M177.036 177.036H0V0H177.036V177.036ZM18.1603 79.4379H62.1975V97.5982H18.1603V158.876H79.4379V18.1603H18.1603V79.4379ZM97.5982 158.876H158.876V97.5982H114.769V79.4379H158.876V18.1603H97.5982V158.876Z" fill="#f4f5f7"/></svg>
+      <div style="color:#6b7078;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:18px">BLACKBOX Store · confidentiel</div>
+      <input id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="Code d'accès" maxlength="8"
+        style="width:100%;padding:13px 15px;background:#171a1f;border:1px solid rgba(255,255,255,.14);border-radius:12px;color:#f4f5f7;font-size:16px;text-align:center;letter-spacing:.3em;outline:none">
+      <div id="pinerr" style="height:18px;margin-top:10px;color:#c9605a;font-size:12px"></div>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var g=document.getElementById('gate'), i=document.getElementById('pin'), e=document.getElementById('pinerr');
+      function check(){ if(i.value==='14698'){ g.style.display='none'; } else { e.textContent='Code incorrect'; i.value=''; } }
+      i.addEventListener('keydown',function(ev){ if(ev.key==='Enter') check(); e.textContent=''; });
+      i.focus();
+    })();
+  </script>
+
   <div class="topbar">
     <div class="brand">
       <svg viewBox="0 0 178 178" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M177.036 177.036H0V0H177.036V177.036ZM18.1603 79.4379H62.1975V97.5982H18.1603V158.876H79.4379V18.1603H18.1603V79.4379ZM97.5982 158.876H158.876V97.5982H114.769V79.4379H158.876V18.1603H97.5982V158.876Z" fill="#f4f5f7"/></svg>
