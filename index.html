@@ -118,6 +118,38 @@
   .flow-note{margin-top:16px;padding:10px 14px;border:1px dashed var(--line-strong);border-radius:10px;
     font-size:11.5px;color:var(--muted);line-height:1.5;max-width:1000px}
   .flow-note b{color:var(--ink)}
+  /* ============ ARBRE SITEMAP (style PDF BLACKBOX Paris, fond sombre) ============ */
+  .tree{padding:54px 80px 120px;width:max-content;min-width:100%;display:flex;flex-direction:column;align-items:center}
+  .tree .root{display:flex;flex-direction:column;align-items:center;gap:0}
+  /* nœud noir encadré (le style PDF) */
+  .node{background:#000;border:1px solid var(--line-strong);border-radius:9px;padding:9px 15px;
+    text-align:center;max-width:230px;position:relative}
+  .node .ti{font-size:12px;font-weight:700;color:var(--ink);letter-spacing:.01em;line-height:1.3}
+  .node .de{font-size:10.5px;color:var(--muted);line-height:1.4;margin-top:5px;font-weight:400}
+  .node .id{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;margin-bottom:3px;display:block}
+  /* nœud racine — plus grand, accent laiton */
+  .node.rt{border-color:var(--line-strong);padding:12px 26px;border-radius:11px}
+  .node.rt .ti{font-size:14px;letter-spacing:.14em}
+  /* nœud de zone (A/B/C) — coloré par la légende */
+  .node.zn{border-color:var(--z);background:#0e0f12}
+  .node.zn .ti{color:var(--z);letter-spacing:.06em}
+  /* nœud écran-clé */
+  .node.key .ti::after{content:"◆";color:var(--z);font-size:8px;margin-left:6px;vertical-align:middle}
+  /* nœud d'annotation (les notes grises du PDF : « Retirer la newsletter… ») — sans cadre */
+  .note{max-width:210px;text-align:center;font-size:10.5px;color:var(--muted);line-height:1.45;padding:4px 8px}
+  .note b{color:var(--ink);font-weight:600}
+  /* connecteurs : traits verticaux/horizontaux entre niveaux */
+  .vbar{width:1px;height:26px;background:var(--line-strong)}
+  .vbar.sm{height:16px}
+  /* rangée de branches (les enfants côte à côte) reliés par une barre horizontale */
+  .branch{display:flex;align-items:flex-start;justify-content:center;gap:26px;position:relative}
+  .branch::before{content:"";position:absolute;top:0;left:var(--l,10%);right:var(--r,10%);height:1px;background:var(--line-strong)}
+  .limb{display:flex;flex-direction:column;align-items:center}
+  /* colonne d'écrans empilés verticalement (comme les sections du PDF) */
+  .stack{display:flex;flex-direction:column;align-items:center;gap:0}
+  .stack .node{margin-top:0}
+  /* petit label de groupe entre les écrans (Commande / Suivi…) */
+  .glabel{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:700;margin:14px 0 8px}
   /* zoom controls */
   .zc{position:fixed;right:18px;bottom:18px;z-index:20;display:flex;gap:8px}
   .zc button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--panel);
@@ -161,101 +193,105 @@
 
   <div id="stage">
     <div id="world">
-      <div class="board">
-        <h1>BLACKBOX Store</h1>
-        <p class="sub">Plateforme B2B de réassort des salons. <b>KHube (Office D-Studio) pilote l'interface</b>, Shopify est le moteur caché — <b>pas de checkout Shopify côté Store</b> (paiement Stripe orchestré par KHube). <b>~27 écrans cadre</b> + composants transverses + une bande d'états critiques + le flow d'auth barber.</p>
+      <div class="tree">
+       <div class="root">
 
-        <div class="cols">
+        <!-- ── RACINE ── -->
+        <div class="node rt"><div class="ti">BLACKBOX STORE</div><div class="de">Plateforme B2B de réassort salons · KHube pilote, Shopify moteur caché</div></div>
+        <div class="vbar"></div>
 
-          <!-- ============ AUTH ============ -->
-          <section class="zone" style="--z:var(--auth)">
-            <div class="zone-h"><span class="k">A</span><span class="n">Auth</span><span class="count">4 écrans</span></div>
-            <p class="who">Transverse. La porte d'entrée : accès restreint aux gérants, par matricule.</p>
+        <!-- ── sous-racine : contexte ── -->
+        <div class="note"><b>Pas de checkout Shopify</b> côté Store — paiement Stripe orchestré par KHube. ~27 écrans cadre + états + flow barber.</div>
+        <div class="vbar"></div>
 
-            <div class="grp">
-              <div class="scr key"><div class="id">A1</div><div class="ti">Login matricule</div><div class="de">Matricule + secret. Auth KHube (Better Auth). <b>2 rôles</b> : <b>gérant</b> (accès complet) · <b>barber</b> (accès restreint aux retraits colis B14/B15, rien d'autre).</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr"><div class="id">A2</div><div class="ti">États d'accès (refus)</div><div class="de">Matricule inconnu · compte suspendu · salon fermé · pas de droit de commander → refus explicite.</div><span class="tag">FLUX</span></div>
-              <div class="scr key"><div class="id">A3</div><div class="ti">1ère connexion — mandat Stripe</div><div class="de">Mise en place du mandat de prélèvement (SEPA/carte) <b>avant</b> toute commande. Obligatoire. ⚠️ délai de validation SEPA (voir états).</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr key"><div class="id">A4</div><div class="ti">Activation compte barber</div><div class="de">Sur invitation du gérant. Vérif « la totale » : <b>matricule (Inside) + code d'invitation + OTP SMS</b> → définit son secret → accès activé, scopé au salon. Voir flow ci-dessous.</div><span class="tag">FLOW barber</span></div>
+        <!-- ── 3 BRANCHES : A / B / C ── -->
+        <div class="branch" style="--l:16%;--r:16%">
+
+          <!-- ========= LIMB A · AUTH ========= -->
+          <div class="limb" style="--z:var(--auth)">
+            <div class="vbar sm"></div>
+            <div class="node zn"><div class="ti">A · Auth</div><div class="de">La porte — accès gérant par matricule</div></div>
+            <div class="vbar"></div>
+            <div class="stack">
+              <div class="node key" style="--z:var(--auth)"><span class="id" style="color:var(--auth)">A1</span><div class="ti">Login matricule</div><div class="de">Matricule + secret · 2 rôles gérant / barber</div></div>
+              <div class="vbar sm"></div>
+              <div class="node" style="--z:var(--auth)"><span class="id" style="color:var(--auth)">A2</span><div class="ti">États d'accès (refus)</div><div class="de">Inconnu · suspendu · salon fermé · sans droit</div></div>
+              <div class="vbar sm"></div>
+              <div class="node key" style="--z:var(--auth)"><span class="id" style="color:var(--auth)">A3</span><div class="ti">1ʳᵉ connexion — mandat Stripe</div><div class="de">Mandat SEPA/carte avant toute commande</div></div>
+              <div class="vbar sm"></div>
+              <div class="node key" style="--z:var(--auth)"><span class="id" style="color:var(--auth)">A4</span><div class="ti">Activation compte barber</div><div class="de">Matricule + code invit + OTP SMS → accès scopé salon</div></div>
             </div>
-          </section>
+          </div>
 
-          <!-- ============ FRONT GERANT ============ -->
-          <section class="zone" style="--z:var(--gerant)">
-            <div class="zone-h"><span class="k">B</span><span class="n">Front gérant</span><span class="count">14 écrans</span></div>
-            <p class="who">Ce que le gérant de salon voit. La surface la plus soignée — c'est le produit qu'il touche au quotidien.</p>
-
-            <!-- composant transverse (ex-B2) -->
-            <div class="comp" style="--z:var(--gerant)"><div class="id">◇ composant transverse</div><div class="ti">Sélecteur de salon actif</div><div class="de">« Je commande pour → salon X », présent en permanence (accueil, catalogue, checkout). <b>Pas un écran</b> : un composant réutilisé partout. ✅ <b>Un panier PAR salon</b> (scindé) : changer de salon ne vide rien, chaque salon garde son panier. Bandeau « panier en cours pour [salon] » au changement.</div><span class="badge">tranché · panier par salon</span></div>
-
-            <div class="grp">
-              <div class="grp-t">Contexte salon</div>
-              <div class="scr key"><div class="id">B1</div><div class="ti">Mes salons (accueil)</div><div class="de">Salons rattachés au matricule : nom, adresse, statut. CTA « commander pour… ». Porte aussi le panneau d'alertes (voir états).</div><span class="tag">CDC / ARCHI</span></div>
+          <!-- ========= LIMB B · FRONT GÉRANT ========= -->
+          <div class="limb" style="--z:var(--gerant)">
+            <div class="vbar sm"></div>
+            <div class="node zn"><div class="ti">B · Front gérant</div><div class="de">14 écrans — la surface la plus soignée</div></div>
+            <div class="vbar"></div>
+            <div class="stack">
+              <div class="note">◇ <b>Sélecteur de salon actif</b> — composant partout · un panier PAR salon (scindé)</div>
+              <div class="glabel">Contexte salon</div>
+              <div class="node key" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B1</span><div class="ti">Mes salons (accueil)</div><div class="de">Salons rattachés + centre d'alertes</div></div>
+              <div class="glabel">Commande</div>
+              <div class="node key" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B3</span><div class="ti">Catalogue B2B</div><div class="de">Consommables pro autorisés · salon affiché</div></div>
+              <div class="vbar sm"></div>
+              <div class="node" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B4</span><div class="ti">Fiche produit B2B</div><div class="de">Conditionnement, prix pro, ajout panier</div></div>
+              <div class="vbar sm"></div>
+              <div class="node key" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B5</span><div class="ti">Panier B2B</div><div class="de">Récap + salon · validation serveur</div></div>
+              <div class="vbar sm"></div>
+              <div class="node key" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B6</span><div class="ti">Checkout — adresses pré-remplies</div><div class="de">Verrouillé par salon · mandat Stripe, zéro carte</div></div>
+              <div class="vbar sm"></div>
+              <div class="node" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B7</span><div class="ti">Confirmation commande</div><div class="de">Salon + délai estimé + récap</div></div>
+              <div class="glabel">Suivi & historique</div>
+              <div class="node" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B8</span><div class="ti">Historique (filtre salon)</div><div class="de">Par salon / période · statut, montant</div></div>
+              <div class="vbar sm"></div>
+              <div class="node" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B9</span><div class="ti">Détail commande + tracking</div><div class="de">Lignes, statut fournisseur, facture PDF</div></div>
+              <div class="vbar sm"></div>
+              <div class="node key" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B10</span><div class="ti">Réassort / recommander (1 clic)</div><div class="de">Réitérer une commande + réassort suggéré</div></div>
+              <div class="vbar sm"></div>
+              <div class="node" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B11</span><div class="ti">SAV / retour / avoir</div><div class="de">Retour PARTIEL par ligne · total = tout coché</div></div>
+              <div class="glabel">Compte gérant</div>
+              <div class="node" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B12</span><div class="ti">Mon compte (onglets)</div><div class="de">Mandat · factures · adresses salon</div></div>
+              <div class="glabel">Retraits clients · pont phygital</div>
+              <div class="note">◇ <b>Gérant + barber (accès allégé)</b> — barber remet les colis, restreint à B14/B15</div>
+              <div class="node key" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B16</span><div class="ti">Mon équipe (gérant)</div><div class="de">Invite ses barbers · rattache aux salons</div></div>
+              <div class="vbar sm"></div>
+              <div class="node key" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B14</span><div class="ti">Colis clients à remettre</div><div class="de">Capsule / Cosmétique arrivés au salon</div></div>
+              <div class="vbar sm"></div>
+              <div class="node" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B15</span><div class="ti">Détail colis + remise</div><div class="de">Vérif code → « remis » → notif client</div></div>
             </div>
+          </div>
 
-            <div class="grp">
-              <div class="grp-t">Commande</div>
-              <div class="scr key"><div class="id">B3</div><div class="ti">Catalogue B2B</div><div class="de">Consommables pro autorisés. Salon destinataire affiché sur chaque produit. Recherche / filtre.</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr"><div class="id">B4</div><div class="ti">Fiche produit B2B</div><div class="de">Conditionnement, prix pro, dispo, ajout au panier avec quantité.</div><span class="tag">FLUX</span></div>
-              <div class="scr key"><div class="id">B5</div><div class="ti">Panier B2B</div><div class="de">Récap + salon destinataire. Validation serveur (matricule, salon, produits autorisés) + états d'erreur.</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr key"><div class="id">B6</div><div class="ti">Checkout — adresses pré-remplies</div><div class="de">Livraison + facturation verrouillées par salon. Paiement = mandat Stripe, zéro saisie carte.</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr"><div class="id">B7</div><div class="ti">Confirmation de commande</div><div class="de">Salon destinataire + délai estimé + récap.</div><span class="tag">FLUX</span></div>
+          <!-- ========= LIMB C · BACK-OFFICE ========= -->
+          <div class="limb" style="--z:var(--office)">
+            <div class="vbar sm"></div>
+            <div class="node zn"><div class="ti">C · Back-office</div><div class="de">9 écrans — équipe D-Studio, interne</div></div>
+            <div class="vbar"></div>
+            <div class="stack">
+              <div class="glabel">Fournisseurs & dropshipping</div>
+              <div class="node" style="--z:var(--office)"><span class="id" style="color:var(--office)">C4</span><div class="ti">Gestion fournisseurs</div><div class="de">Mode (API/email/manuel), credentials, SLA</div></div>
+              <div class="vbar sm"></div>
+              <div class="node key" style="--z:var(--office)"><span class="id" style="color:var(--office)">C5</span><div class="ti">Mapping produit ↔ fournisseur</div><div class="de">Obligatoire avant publication Store</div></div>
+              <div class="vbar sm"></div>
+              <div class="node key" style="--z:var(--office)"><span class="id" style="color:var(--office)">C6</span><div class="ti">Commandes fournisseurs</div><div class="de">State machine statuts · tracking · relance</div></div>
+              <div class="vbar sm"></div>
+              <div class="node key" style="--z:var(--office)"><span class="id" style="color:var(--office)">C7</span><div class="ti">Dashboard « à traiter »</div><div class="de">Erreurs, ruptures, mapping manquant</div></div>
+              <div class="glabel">Paiement & recouvrement</div>
+              <div class="node key" style="--z:var(--office)"><span class="id" style="color:var(--office)">C8</span><div class="ti">Dashboard prélèvements Stripe</div><div class="de">Mandats · réconciliation commandes</div></div>
+              <div class="vbar sm"></div>
+              <div class="node" style="--z:var(--office)"><span class="id" style="color:var(--office)">C9</span><div class="ti">Détail mandat / franchisé</div><div class="de">1 franchisé = 1 client Stripe, N salons</div></div>
+              <div class="glabel">Reporting</div>
+              <div class="node" style="--z:var(--office)"><span class="id" style="color:var(--office)">C10</span><div class="ti">Dashboards + exports</div><div class="de">Par salon · états · paiements · CSV</div></div>
+              <div class="glabel">Système</div>
+              <div class="node" style="--z:var(--office)"><span class="id" style="color:var(--office)">C12</span><div class="ti">Logs / audit</div><div class="de">Journal des mutations back-office</div></div>
+              <div class="vbar sm"></div>
+              <div class="node" style="--z:var(--office)"><span class="id" style="color:var(--office)">C13</span><div class="ti">Monitoring intégrations</div><div class="de">Webhooks Shopify / Stripe / fournisseurs</div></div>
             </div>
-
-            <div class="grp">
-              <div class="grp-t">Suivi & historique</div>
-              <div class="scr"><div class="id">B8</div><div class="ti">Historique (filtre salon)</div><div class="de">Commandes filtrables par salon / période : statut, montant.</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr"><div class="id">B9</div><div class="ti">Détail commande + tracking</div><div class="de">Lignes, statut fournisseur (même state machine que C6), n° de suivi, facture PDF. ⚠️ tracking dropshipping = pas garanti temps réel.</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr key"><div class="id">B10</div><div class="ti">Réassort / recommander (1 clic)</div><div class="de">Réitérer une commande passée en un clic (+ réassort suggéré).</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr"><div class="id">B11</div><div class="ti">SAV / retour / avoir</div><div class="de">Signaler produit cassé / manquant / erroné → retour ou avoir. ✅ <b>Retour PARTIEL par ligne</b> : le gérant sélectionne la/les ligne(s) et la quantité concernée (une commande = plusieurs réf. ; le total = tout coché).</div><span class="tag">CDC · tranché partiel</span></div>
-            </div>
-
-            <div class="grp">
-              <div class="grp-t">Compte gérant</div>
-              <div class="scr"><div class="id">B12</div><div class="ti">Mon compte (onglets)</div><div class="de">Un écran à onglets : <b>Mandat & prélèvements</b> (Stripe) · <b>Factures</b> (Stripe Invoicing) · <b>Adresses salon</b> · coordonnées. (fusion B12+B13)</div><span class="tag">CDC / ARCHI</span></div>
-            </div>
-
-            <div class="grp">
-              <div class="grp-t">Retraits clients au salon · pont phygital</div>
-              <div class="comp" style="--z:var(--gerant)"><div class="id">◇ accès</div><div class="ti">Gérant + barber (accès allégé)</div><div class="de">Le gérant n'est pas toujours là : un <b>barber</b> peut remettre les colis via son <b>matricule</b> — accès restreint à B14/B15 <b>uniquement</b> (ni catalogue, ni prix, ni paiement). Données via <b>API KHube</b> (source de vérité du retrait).</div><span class="badge">rôle allégé</span></div>
-              <div class="scr key"><div class="id">B16</div><div class="ti">Mon équipe (gérant)</div><div class="de">Le gérant <b>invite ses barbers</b> et les rattache à ses salons : liste équipe par salon, statut invitation (en attente / actif / expiré), activer/désactiver un accès. C'est l'invitation qui crée le droit d'accès (jamais l'auto-inscription).</div><span class="tag">FLOW barber</span></div>
-              <div class="scr key"><div class="id">B14</div><div class="ti">Colis clients à remettre</div><div class="de">Colis <b>Capsule / Cosmétique</b> arrivés au salon (retrait client). Client, n° commande, date d'arrivée, statut (à remettre / remis / retard J+3 · J+7).</div><span class="tag">CDC (interface salon)</span></div>
-              <div class="scr"><div class="id">B15</div><div class="ti">Détail colis + remise</div><div class="de">Vérif code / identité de retrait → marquer « remis au client » → déclenche la notif « retrait effectué ».</div><span class="tag">CDC (interface salon)</span></div>
-            </div>
-          </section>
-
-          <!-- ============ BACK OFFICE ============ -->
-          <section class="zone" style="--z:var(--office)">
-            <div class="zone-h"><span class="k">C</span><span class="n">Back-office</span><span class="count">9 écrans</span></div>
-            <p class="who">Équipe BLACKBOX / D-Studio. Interne : fonctionnel avant d'être léché. <br><span style="color:var(--dim)">Gestion des comptes/salons exclue (BLACKBOX Inside = source de vérité identité).</span></p>
-
-            <div class="grp">
-              <div class="grp-t">Fournisseurs & dropshipping</div>
-              <div class="scr"><div class="id">C4</div><div class="ti">Gestion fournisseurs</div><div class="de">Mode (API / email / manuel), credentials, coordonnées, SLA.</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr key"><div class="id">C5</div><div class="ti">Mapping produit ↔ fournisseur</div><div class="de">Associer chaque produit/variante à son fournisseur. Obligatoire avant publication Store.</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr key"><div class="id">C6</div><div class="ti">Commandes fournisseurs</div><div class="de">Liste + détail. State machine des statuts (en attente / envoyée / confirmée / expédiée / échec), tracking, relance.</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr key"><div class="id">C7</div><div class="ti">Dashboard « à traiter »</div><div class="de">Erreurs, ruptures, mapping manquant, absence d'accusé → file de traitement manuel.</div><span class="tag">CDC / ARCHI</span></div>
-            </div>
-
-            <div class="grp">
-              <div class="grp-t">Paiement & recouvrement</div>
-              <div class="scr key"><div class="id">C8</div><div class="ti">Dashboard prélèvements Stripe</div><div class="de">Mandats, prélèvements, statuts, réconciliation avec les commandes Shopify.</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr"><div class="id">C9</div><div class="ti">Détail mandat / franchisé</div><div class="de">1 franchisé = 1 client Stripe, N salons. Suivi des impayés.</div><span class="tag">FLUX</span></div>
-            </div>
-
-            <div class="grp">
-              <div class="grp-t">Reporting</div>
-              <div class="scr"><div class="id">C10</div><div class="ti">Dashboards reporting + exports</div><div class="de">Commandes par salon · états fournisseurs · paiements. Filtres salon / période. <b>Export CSV = bouton ici</b> (fusion C11).</div><span class="tag">CDC / ARCHI</span></div>
-            </div>
-
-            <div class="grp">
-              <div class="grp-t">Système</div>
-              <div class="scr"><div class="id">C12</div><div class="ti">Logs / audit</div><div class="de">Journal des mutations back-office.</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr"><div class="id">C13</div><div class="ti">Monitoring intégrations</div><div class="de">Webhooks Shopify / Stripe / fournisseurs : statuts, replay.</div><span class="tag">FLUX</span></div>
-            </div>
-          </section>
+          </div>
 
         </div>
+       </div>
+
 
         <!-- ====== ÉTATS CRITIQUES À MAQUETTER ====== -->
         <section class="states">
@@ -352,8 +388,15 @@
   function zoomAt(f){const r=stage.getBoundingClientRect(),mx=r.width/2,my=r.height/2;const ns=Math.min(max,Math.max(min,scale*f)),k=ns/scale;tx=mx-(mx-tx)*k;ty=my-(my-ty)*k;scale=ns;apply();}
   document.getElementById('zin').onclick=()=>zoomAt(1.15);
   document.getElementById('zout').onclick=()=>zoomAt(1/1.15);
-  document.getElementById('zreset').onclick=()=>{scale=1;tx=0;ty=0;apply();};
-  apply();
+  // fit-to-width au chargement : l'arbre fait ~5000px, on le cadre pour voir l'ensemble
+  function fit(){
+    const cw=world.scrollWidth, ch=world.scrollHeight, vw=stage.clientWidth, vh=stage.clientHeight;
+    scale=Math.max(min, Math.min(vw/cw, vh/ch, 1)*0.94);
+    tx=(vw - cw*scale)/2; ty=14;
+    apply();
+  }
+  document.getElementById('zreset').onclick=fit;
+  fit();
 })();
 </script>
 </body>
