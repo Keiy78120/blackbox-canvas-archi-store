@@ -12,6 +12,7 @@
     --auth:#c9a227;      /* laiton — la porte */
     --gerant:#6ea8fe;    /* bleu — surface client gérant */
     --office:#9a8cff;    /* violet — back-office (réservé outil interne) */
+    --state:#e08a4a;     /* orange — états à maquetter */
     --ok:#57b894;
     --radius:14px; --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
     --sans:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
@@ -34,10 +35,10 @@
   #stage{position:absolute;inset:60px 0 0 0;overflow:hidden;cursor:grab}
   #stage.drag{cursor:grabbing}
   #world{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform}
-  .board{position:relative;padding:54px 60px 80px;width:2360px}
+  .board{position:relative;padding:54px 60px 80px;width:2440px}
   .board h1{font-size:15px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);
     font-weight:700;margin:0 0 4px}
-  .board .sub{color:var(--muted);font-size:13px;margin:0 0 34px;max-width:760px;line-height:1.5}
+  .board .sub{color:var(--muted);font-size:13px;margin:0 0 34px;max-width:820px;line-height:1.5}
   .board .sub b{color:var(--ink);font-weight:600}
   /* columns */
   .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:34px;align-items:start}
@@ -61,6 +62,14 @@
     color:var(--dim);border:1px solid var(--line);border-radius:6px;padding:2px 6px}
   .scr.key{border-color:var(--line-strong)}
   .scr.key .ti::after{content:"◆";color:var(--z);font-size:9px;margin-left:7px;vertical-align:middle}
+  /* transverse component note */
+  .comp{background:transparent;border:1px dashed var(--line-strong);border-radius:var(--radius);
+    padding:11px 13px;margin:0 0 10px}
+  .comp .id{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.06em}
+  .comp .ti{font-size:12.5px;font-weight:700;margin:3px 0 4px;color:var(--ink)}
+  .comp .de{font-size:11px;color:var(--dim);line-height:1.4}
+  .comp .badge{display:inline-block;margin-top:7px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--z);border:1px solid var(--z);border-radius:6px;padding:1px 6px}
   /* footer note */
   .foot{margin:40px 0 0;padding-left:8px;display:flex;gap:40px;flex-wrap:wrap}
   .foot .col{max-width:520px}
@@ -72,8 +81,21 @@
   .count{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--z);
     border:1px solid var(--z);border-radius:20px;padding:2px 10px;margin-left:auto}
   .engine{margin-top:26px;padding:12px 16px;border:1px dashed var(--line-strong);border-radius:12px;
-    color:var(--muted);font-size:12px;display:flex;gap:10px;align-items:center;max-width:820px;margin-left:8px}
+    color:var(--muted);font-size:12px;display:flex;gap:10px;align-items:center;max-width:900px;margin-left:8px}
   .engine b{color:var(--ink)}
+  /* states band */
+  .states{margin:30px 8px 0;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--state);
+    border-radius:16px;padding:20px 22px 22px}
+  .states-h{display:flex;align-items:baseline;gap:10px;margin:0 0 4px}
+  .states-h .n{font-size:15px;font-weight:800}
+  .states-h .k{font-family:var(--mono);font-size:11px;color:var(--state);letter-spacing:.1em}
+  .states .lead{color:var(--muted);font-size:12px;margin:6px 0 18px;max-width:900px;line-height:1.5}
+  .states .lead b{color:var(--ink)}
+  .states-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .st{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:11px 12px}
+  .st .ti{font-size:12.5px;font-weight:700;color:var(--ink);margin:0 0 4px}
+  .st .on{font-family:var(--mono);font-size:9.5px;color:var(--state);letter-spacing:.05em}
+  .st .de{font-size:11px;color:var(--muted);line-height:1.4;margin-top:4px}
   /* zoom controls */
   .zc{position:fixed;right:18px;bottom:18px;z-index:20;display:flex;gap:8px}
   .zc button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--panel);
@@ -109,8 +131,9 @@
     <div class="legend">
       <b><span class="dot" style="background:var(--auth)"></span>Auth</b>
       <b><span class="dot" style="background:var(--gerant)"></span>Front gérant (B2B)</b>
-      <b><span class="dot" style="background:var(--office)"></span>Back-office (interne)</b>
-      <span class="hint">◆ = écran clé · glisser pour naviguer · molette / +− pour zoomer</span>
+      <b><span class="dot" style="background:var(--office)"></span>Back-office</b>
+      <b><span class="dot" style="background:var(--state)"></span>États à maquetter</b>
+      <span class="hint">◆ = écran clé · glisser pour naviguer · molette / +− zoom</span>
     </div>
   </div>
 
@@ -118,7 +141,7 @@
     <div id="world">
       <div class="board">
         <h1>BLACKBOX Store</h1>
-        <p class="sub">Plateforme B2B de réassort des salons. <b>KHube (Office D-Studio) pilote l'interface</b>, Shopify est le moteur caché — <b>pas de checkout Shopify côté Store</b> (paiement Stripe orchestré par KHube). 26 écrans en 3 zones.</p>
+        <p class="sub">Plateforme B2B de réassort des salons. <b>KHube (Office D-Studio) pilote l'interface</b>, Shopify est le moteur caché — <b>pas de checkout Shopify côté Store</b> (paiement Stripe orchestré par KHube). <b>~23 écrans cadre</b> + un composant transverse + une bande d'états critiques à maquetter.</p>
 
         <div class="cols">
 
@@ -130,19 +153,21 @@
             <div class="grp">
               <div class="scr key"><div class="id">A1</div><div class="ti">Login matricule</div><div class="de">Matricule + secret, message d'accès restreint gérants. Auth KHube (Better Auth).</div><span class="tag">CDC / ARCHI</span></div>
               <div class="scr"><div class="id">A2</div><div class="ti">États d'accès (refus)</div><div class="de">Matricule inconnu · compte suspendu · salon fermé · pas de droit de commander → refus explicite.</div><span class="tag">FLUX</span></div>
-              <div class="scr key"><div class="id">A3</div><div class="ti">1ère connexion — mandat Stripe</div><div class="de">Mise en place du mandat de prélèvement (SEPA/carte) <b>avant</b> toute commande. Obligatoire.</div><span class="tag">CDC / ARCHI</span></div>
+              <div class="scr key"><div class="id">A3</div><div class="ti">1ère connexion — mandat Stripe</div><div class="de">Mise en place du mandat de prélèvement (SEPA/carte) <b>avant</b> toute commande. Obligatoire. ⚠️ délai de validation SEPA (voir états).</div><span class="tag">CDC / ARCHI</span></div>
             </div>
           </section>
 
           <!-- ============ FRONT GERANT ============ -->
           <section class="zone" style="--z:var(--gerant)">
-            <div class="zone-h"><span class="k">B</span><span class="n">Front gérant</span><span class="count">13 écrans</span></div>
+            <div class="zone-h"><span class="k">B</span><span class="n">Front gérant</span><span class="count">11 écrans</span></div>
             <p class="who">Ce que le gérant de salon voit. La surface la plus soignée — c'est le produit qu'il touche au quotidien.</p>
+
+            <!-- composant transverse (ex-B2) -->
+            <div class="comp" style="--z:var(--gerant)"><div class="id">◇ composant transverse</div><div class="ti">Sélecteur de salon actif</div><div class="de">« Je commande pour → salon X », présent en permanence (accueil, catalogue, checkout). <b>Pas un écran</b> : un composant réutilisé partout. ⚠️ règle métier à figer : le panier se vide-t-il au changement de salon, ou est-il scindé par salon ?</div><span class="badge">à spécifier avant design</span></div>
 
             <div class="grp">
               <div class="grp-t">Contexte salon</div>
-              <div class="scr key"><div class="id">B1</div><div class="ti">Mes salons (accueil)</div><div class="de">Salons rattachés au matricule : nom, adresse, statut (actif / réassort / fermé). CTA « commander pour… ».</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr"><div class="id">B2</div><div class="ti">Sélecteur de salon</div><div class="de">Bascule « je commande pour → salon X », présente en permanence (catalogue + checkout).</div><span class="tag">CDC / ARCHI</span></div>
+              <div class="scr key"><div class="id">B1</div><div class="ti">Mes salons (accueil)</div><div class="de">Salons rattachés au matricule : nom, adresse, statut. CTA « commander pour… ». Porte aussi le panneau d'alertes (voir états).</div><span class="tag">CDC / ARCHI</span></div>
             </div>
 
             <div class="grp">
@@ -157,28 +182,27 @@
             <div class="grp">
               <div class="grp-t">Suivi & historique</div>
               <div class="scr"><div class="id">B8</div><div class="ti">Historique (filtre salon)</div><div class="de">Commandes filtrables par salon / période : statut, montant.</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr"><div class="id">B9</div><div class="ti">Détail commande + tracking</div><div class="de">Lignes, statut fournisseur, n° de suivi temps réel, facture PDF.</div><span class="tag">CDC / ARCHI</span></div>
+              <div class="scr"><div class="id">B9</div><div class="ti">Détail commande + tracking</div><div class="de">Lignes, statut fournisseur (même state machine que C6), n° de suivi, facture PDF. ⚠️ tracking dropshipping = pas garanti temps réel.</div><span class="tag">CDC / ARCHI</span></div>
               <div class="scr key"><div class="id">B10</div><div class="ti">Réassort / recommander (1 clic)</div><div class="de">Réitérer une commande passée en un clic (+ réassort suggéré).</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr"><div class="id">B11</div><div class="ti">SAV / retour / avoir</div><div class="de">Signaler produit cassé / manquant / erroné → demande de retour ou d'avoir.</div><span class="tag">CADRAGE Q17</span></div>
+              <div class="scr"><div class="id">B11</div><div class="ti">SAV / retour / avoir</div><div class="de">Signaler produit cassé / manquant / erroné → retour ou avoir. ⚠️ total vs partiel = à trancher (Q17) avant de dessiner.</div><span class="tag">À TRANCHER Q17</span></div>
             </div>
 
             <div class="grp">
               <div class="grp-t">Compte gérant</div>
-              <div class="scr"><div class="id">B12</div><div class="ti">Mon compte — mandat & factures</div><div class="de">Mandat Stripe, historique des prélèvements, factures (Stripe Invoicing), coordonnées.</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr"><div class="id">B13</div><div class="ti">Adresses salon</div><div class="de">Éditer les adresses livraison / facturation depuis l'espace client (si autorisé).</div><span class="tag">CDC / ARCHI</span></div>
+              <div class="scr"><div class="id">B12</div><div class="ti">Mon compte (onglets)</div><div class="de">Un écran à onglets : <b>Mandat & prélèvements</b> (Stripe) · <b>Factures</b> (Stripe Invoicing) · <b>Adresses salon</b> · coordonnées. (fusion B12+B13)</div><span class="tag">CDC / ARCHI</span></div>
             </div>
           </section>
 
           <!-- ============ BACK OFFICE ============ -->
           <section class="zone" style="--z:var(--office)">
-            <div class="zone-h"><span class="k">C</span><span class="n">Back-office</span><span class="count">10 écrans</span></div>
+            <div class="zone-h"><span class="k">C</span><span class="n">Back-office</span><span class="count">9 écrans</span></div>
             <p class="who">Équipe BLACKBOX / D-Studio. Interne : fonctionnel avant d'être léché. <br><span style="color:var(--dim)">Gestion des comptes/salons exclue (BLACKBOX Inside = source de vérité identité).</span></p>
 
             <div class="grp">
               <div class="grp-t">Fournisseurs & dropshipping</div>
               <div class="scr"><div class="id">C4</div><div class="ti">Gestion fournisseurs</div><div class="de">Mode (API / email / manuel), credentials, coordonnées, SLA.</div><span class="tag">CDC / ARCHI</span></div>
               <div class="scr key"><div class="id">C5</div><div class="ti">Mapping produit ↔ fournisseur</div><div class="de">Associer chaque produit/variante à son fournisseur. Obligatoire avant publication Store.</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr key"><div class="id">C6</div><div class="ti">Commandes fournisseurs</div><div class="de">Liste + détail. Statuts (en attente / envoyée / confirmée / expédiée / échec), tracking, relance.</div><span class="tag">CDC / ARCHI</span></div>
+              <div class="scr key"><div class="id">C6</div><div class="ti">Commandes fournisseurs</div><div class="de">Liste + détail. State machine des statuts (en attente / envoyée / confirmée / expédiée / échec), tracking, relance.</div><span class="tag">CDC / ARCHI</span></div>
               <div class="scr key"><div class="id">C7</div><div class="ti">Dashboard « à traiter »</div><div class="de">Erreurs, ruptures, mapping manquant, absence d'accusé → file de traitement manuel.</div><span class="tag">CDC / ARCHI</span></div>
             </div>
 
@@ -190,8 +214,7 @@
 
             <div class="grp">
               <div class="grp-t">Reporting</div>
-              <div class="scr"><div class="id">C10</div><div class="ti">Dashboards reporting</div><div class="de">Commandes par salon · états fournisseurs · paiements. Filtres salon / période.</div><span class="tag">CDC / ARCHI</span></div>
-              <div class="scr"><div class="id">C11</div><div class="ti">Exports CSV</div><div class="de">Export commandes par salon / période (reporting, compta).</div><span class="tag">CDC / ARCHI</span></div>
+              <div class="scr"><div class="id">C10</div><div class="ti">Dashboards reporting + exports</div><div class="de">Commandes par salon · états fournisseurs · paiements. Filtres salon / période. <b>Export CSV = bouton ici</b> (fusion C11).</div><span class="tag">CDC / ARCHI</span></div>
             </div>
 
             <div class="grp">
@@ -203,24 +226,46 @@
 
         </div>
 
+        <!-- ====== ÉTATS CRITIQUES À MAQUETTER ====== -->
+        <section class="states">
+          <div class="states-h"><span class="k">É</span><span class="n">États critiques à maquetter</span><span class="count" style="--z:var(--state)">≈ 6 frames</span></div>
+          <p class="lead">Ce ne sont pas des écrans en plus — ce sont des <b>états d'écrans existants</b>. Mais « un état non listé = un état non dessiné » : ils demandent chacun un vrai temps de conception et le happy-path seul ne tient pas en prod. <b>À briefer explicitement, pas « et les états usuels ».</b></p>
+          <div class="states-grid">
+            <div class="st"><div class="ti">Mandat en échec / en validation</div><div class="on">sur A3 + B6 + B12</div><div class="de">Le SEPA peut mettre ~14j à se confirmer, ou être refusé. Le gérant doit être bloqué/informé <b>avant</b> le checkout — sinon il ne peut rien commander le jour J. Risque #1.</div></div>
+            <div class="st"><div class="ti">Panier vide</div><div class="on">sur B5</div><div class="de">L'état zéro-article, trivial mais toujours oublié. Guide vers le catalogue.</div></div>
+            <div class="st"><div class="ti">Catalogue / recherche sans résultat</div><div class="on">sur B3</div><div class="de">Empty state de recherche et de filtre à vide.</div></div>
+            <div class="st"><div class="ti">Rupture fournisseur (côté gérant)</div><div class="on">sur B9</div><div class="de">Aujourd'hui la rupture n'est traitée que côté back-office (C7). Que voit le gérant ? Bandeau « retard fournisseur » + alerte.</div></div>
+            <div class="st"><div class="ti">1ère commande / dashboard vide</div><div class="on">sur B1</div><div class="de">Le tout premier écran après le mandat, sans historique : oriente vers le catalogue au lieu d'un dashboard vide.</div></div>
+            <div class="st"><div class="ti">Centre d'alertes gérant</div><div class="on">panneau sur B1</div><div class="de">Vue centralisée « commande retardée / mandat à renouveler / avoir émis » — le gérant revient peu souvent, il ne doit pas découvrir un incident par hasard.</div></div>
+          </div>
+        </section>
+
         <div class="engine" style="--z:var(--office)">
-          🔒&nbsp;<span><b>Shopify = moteur caché.</b> Catalogue, commande, taxes, paiement réglementé restent Shopify (via Admin API), <b>invisibles pour le gérant</b>. Aucun écran Shopify n'est dessiné : tout ce qui est ci-dessus vit dans KHube.</span>
+          🔒&nbsp;<span><b>Shopify = moteur caché.</b> Catalogue, commande, taxes, paiement réglementé restent Shopify (via Admin API), <b>invisibles pour le gérant</b>. Aucun écran Shopify n'est dessiné. <b>⚠️ Zone grise à trancher :</b> la <b>gestion catalogue produit / prix pro</b> se fait-elle directement dans Shopify Admin (hors-scope, comme l'admin comptes), ou manque-t-il un écran Store ?</span>
         </div>
 
         <div class="foot">
           <div class="col">
             <h3>Parcours principal (gérant)</h3>
             <ul>
-              <li><b>A1</b> login → <b>A3</b> mandat (1ʳᵉ fois) → <b>B1</b> mes salons → <b>B2</b> choisir salon → <b>B3</b> catalogue → <b>B5</b> panier → <b>B6</b> checkout → <b>B7</b> confirmation → <b>B9</b> suivi.</li>
+              <li><b>A1</b> login → <b>A3</b> mandat (1ʳᵉ fois) → <b>B1</b> mes salons → <i>[choisir salon]</i> → <b>B3</b> catalogue → <b>B5</b> panier → <b>B6</b> checkout → <b>B7</b> confirmation → <b>B9</b> suivi.</li>
               <li>Réassort récurrent : <b>B1</b> → <b>B10</b> (recommander en 1 clic).</li>
             </ul>
           </div>
           <div class="col">
-            <h3>Ce qui fait varier le compte (à border avec Ayoub)</h3>
+            <h3>À trancher AVANT de briefer le designer</h3>
             <ul>
-              <li><b>Admin comptes/salons</b> (3 écrans) réintégrés seulement si <b>Inside</b> n'est pas prêt.</li>
-              <li><b>États</b> empty / loading / erreur + variantes <b>mobile</b> → doublent vite le nombre de frames.</li>
-              <li><b>SAV (B11)</b> & <b>tracking (B9)</b> : version simple V1 ou riche selon le cadrage.</li>
+              <li><b>Gestion catalogue produit</b> : Shopify Admin direct ou écran Store manquant ? (documenter comme l'exclusion admin comptes)</li>
+              <li><b>SAV / retours (B11, Q17)</b> : total ou partiel — l'écran se dessine différemment.</li>
+              <li><b>Comportement panier</b> au changement de salon actif (vidé / conservé / par salon).</li>
+              <li><b>Admin comptes/salons</b> (3 écrans) réintégrés seulement si <b>Inside</b> n'est finalement pas prêt.</li>
+            </ul>
+          </div>
+          <div class="col">
+            <h3>Budget designer recommandé</h3>
+            <ul>
+              <li><b>~23 écrans cadre</b> + <b>~6 frames d'états</b> listés ci-dessus + variantes mobile des écrans clés.</li>
+              <li>Ordre de grandeur honnête : <b>≈ 33–35 frames</b> pour une V1 complète (parcours + états).</li>
             </ul>
           </div>
         </div>
@@ -239,22 +284,19 @@
 // minimal pan/zoom — same feel as the other blackbox canvases, no deps
 (function(){
   const stage=document.getElementById('stage'), world=document.getElementById('world');
-  let scale=1, tx=0, ty=0, min=.35, max=2;
+  let scale=1, tx=0, ty=0, min=.3, max=2;
   function apply(){ world.style.transform=`translate3d(${tx}px,${ty}px,0) scale(${scale})`; }
-  // drag to pan
   let dragging=false, sx=0, sy=0, ox=0, oy=0;
   stage.addEventListener('pointerdown',e=>{dragging=true;stage.classList.add('drag');sx=e.clientX;sy=e.clientY;ox=tx;oy=ty;stage.setPointerCapture(e.pointerId);});
   stage.addEventListener('pointermove',e=>{if(!dragging)return;tx=ox+(e.clientX-sx);ty=oy+(e.clientY-sy);apply();});
-  stage.addEventListener('pointerup',e=>{dragging=false;stage.classList.remove('drag');});
+  stage.addEventListener('pointerup',()=>{dragging=false;stage.classList.remove('drag');});
   stage.addEventListener('pointercancel',()=>{dragging=false;stage.classList.remove('drag');});
-  // wheel to zoom toward cursor
   stage.addEventListener('wheel',e=>{
     e.preventDefault();
     const r=stage.getBoundingClientRect(), mx=e.clientX-r.left, my=e.clientY-r.top;
     const factor=e.deltaY<0?1.1:1/1.1, ns=Math.min(max,Math.max(min,scale*factor));
     const k=ns/scale; tx=mx-(mx-tx)*k; ty=my-(my-ty)*k; scale=ns; apply();
   },{passive:false});
-  // buttons
   function zoomAt(f){const r=stage.getBoundingClientRect(),mx=r.width/2,my=r.height/2;const ns=Math.min(max,Math.max(min,scale*f)),k=ns/scale;tx=mx-(mx-tx)*k;ty=my-(my-ty)*k;scale=ns;apply();}
   document.getElementById('zin').onclick=()=>zoomAt(1.15);
   document.getElementById('zout').onclick=()=>zoomAt(1/1.15);
