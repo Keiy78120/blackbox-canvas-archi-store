@@ -7,165 +7,135 @@
 <title>BLACKBOX Store — Sitemap / Architecture écrans</title>
 <style>
   :root{
-    --bg:#0b0c0e; --panel:#131519; --panel-2:#171a1f; --line:rgba(255,255,255,.12);
-    --line-strong:rgba(255,255,255,.22); --ink:#f4f5f7; --muted:#a2a6ad; --dim:#6b7078;
-    --auth:#c9a227;      /* laiton — la porte */
-    --gerant:#6ea8fe;    /* bleu — surface client gérant */
-    --office:#9a8cff;    /* violet — back-office (réservé outil interne) */
-    --state:#e08a4a;     /* orange — états à maquetter */
-    --ok:#57b894;
-    --radius:14px; --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
-    --sans:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --bg:#000; --panel:#0f0f10; --panel-2:#161617; --card:#1a1a1b;
+    --line:rgba(255,255,255,.10); --line-strong:rgba(255,255,255,.20);
+    --ink:#ffffff; --muted:#8a8a8f; --dim:#5a5a5f;
+    --auth:#e0b64a;      /* jaune propale — l'accès / la porte */
+    --gerant:#6ea8fe;    /* bleu — surface gérant (le gros du parcours) */
+    --office:#e0655f;    /* corail propale — back-office D-Studio */
+    --flow:rgba(255,255,255,.30);   /* traits de parcours */
+    --sans:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden}
+
   /* ---- top bar ---- */
-  .topbar{position:fixed;inset:0 0 auto 0;height:60px;z-index:20;display:flex;align-items:center;
-    gap:18px;padding:0 22px;background:linear-gradient(180deg,rgba(11,12,14,.96),rgba(11,12,14,.72));
+  .topbar{position:fixed;inset:0 0 auto 0;height:64px;z-index:20;display:flex;align-items:center;
+    gap:22px;padding:0 30px;background:linear-gradient(180deg,rgba(0,0,0,.96),rgba(0,0,0,.72));
     backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-  .brand{display:flex;align-items:center;gap:12px}
-  .brand svg{width:26px;height:26px;display:block}
-  .brand .t{font-weight:800;letter-spacing:.14em;font-size:13px}
-  .brand .s{color:var(--dim);font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-left:2px}
-  .legend{display:flex;gap:16px;margin-left:auto;font-size:11.5px;color:var(--muted);flex-wrap:wrap}
-  .legend b{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:var(--ink)}
+  .brand{display:flex;align-items:center;gap:13px}
+  .brand svg{width:24px;height:24px;display:block}
+  .brand .t{font-weight:800;letter-spacing:.16em;font-size:13px}
+  .brand .s{color:var(--dim);font-size:11px;letter-spacing:.18em;text-transform:uppercase;margin-left:3px}
+  .legend{display:flex;gap:20px;margin-left:auto;font-size:12px;color:var(--muted);align-items:center;flex-wrap:wrap}
+  .legend b{display:inline-flex;align-items:center;gap:7px;font-weight:500;color:var(--ink)}
   .dot{width:9px;height:9px;border-radius:3px;display:inline-block}
   .hint{font-size:11px;color:var(--dim);letter-spacing:.02em}
+
   /* ---- canvas ---- */
-  #stage{position:absolute;inset:60px 0 0 0;overflow:hidden;cursor:grab}
+  #stage{position:absolute;inset:64px 0 0 0;overflow:hidden;cursor:grab;background:#000}
   #stage.drag{cursor:grabbing}
   #world{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform}
-  .board{position:relative;padding:54px 60px 80px;width:2680px}
-  .board h1{font-size:15px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);
-    font-weight:700;margin:0 0 4px}
-  .board .sub{color:var(--muted);font-size:13px;margin:0 0 34px;max-width:820px;line-height:1.5}
-  .board .sub b{color:var(--ink);font-weight:600}
-  /* columns */
-  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:34px;align-items:start}
-  .zone{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px 20px 24px;position:relative}
-  .zone::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:3px;border-radius:3px;background:var(--z)}
-  .zone-h{display:flex;align-items:baseline;gap:10px;margin:0 0 4px;padding-left:8px}
-  .zone-h .k{font-family:var(--mono);font-size:11px;color:var(--z);letter-spacing:.1em}
-  .zone-h .n{font-size:15px;font-weight:800;letter-spacing:.02em}
-  .zone .who{padding-left:8px;color:var(--dim);font-size:11.5px;margin:0 0 16px;line-height:1.45}
-  .grp{margin:18px 0 0;padding-left:8px}
-  .grp:first-of-type{margin-top:4px}
-  .grp-t{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin:0 0 10px;font-weight:700}
-  /* screen card */
-  .scr{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius);
-    padding:12px 13px;margin:0 0 10px;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
-  .scr:hover{transform:translateY(-2px);border-color:var(--z);box-shadow:0 10px 30px -14px rgba(0,0,0,.8)}
-  .scr .id{font-family:var(--mono);font-size:10.5px;color:var(--z);letter-spacing:.06em}
-  .scr .ti{font-size:13.5px;font-weight:700;margin:3px 0 5px;letter-spacing:.01em}
-  .scr .de{font-size:11.5px;color:var(--muted);line-height:1.45}
-  .scr .tag{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;
-    color:var(--dim);border:1px solid var(--line);border-radius:6px;padding:2px 6px}
-  .scr.key{border-color:var(--line-strong)}
-  .scr.key .ti::after{content:"◆";color:var(--z);font-size:9px;margin-left:7px;vertical-align:middle}
-  /* transverse component note */
-  .comp{background:transparent;border:1px dashed var(--line-strong);border-radius:var(--radius);
-    padding:11px 13px;margin:0 0 10px}
-  .comp .id{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.06em}
-  .comp .ti{font-size:12.5px;font-weight:700;margin:3px 0 4px;color:var(--ink)}
-  .comp .de{font-size:11px;color:var(--dim);line-height:1.4}
-  .comp .badge{display:inline-block;margin-top:7px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;
-    text-transform:uppercase;color:var(--z);border:1px solid var(--z);border-radius:6px;padding:1px 6px}
-  /* footer note */
-  .foot{margin:40px 0 0;padding-left:8px;display:flex;gap:40px;flex-wrap:wrap}
-  .foot .col{max-width:520px}
-  .foot h3{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin:0 0 10px;font-weight:700}
-  .foot ul{margin:0;padding:0;list-style:none}
-  .foot li{font-size:12px;color:var(--muted);line-height:1.5;margin:0 0 8px;padding-left:16px;position:relative}
-  .foot li::before{content:"";position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;background:var(--line-strong)}
-  .foot li b{color:var(--ink);font-weight:600}
-  .count{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--z);
-    border:1px solid var(--z);border-radius:20px;padding:2px 10px;margin-left:auto}
-  .engine{margin-top:26px;padding:12px 16px;border:1px dashed var(--line-strong);border-radius:12px;
-    color:var(--muted);font-size:12px;display:flex;gap:10px;align-items:center;max-width:900px;margin-left:8px}
-  .engine b{color:var(--ink)}
-  /* states band */
-  .states{margin:30px 8px 0;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--state);
-    border-radius:16px;padding:20px 22px 22px}
-  .states-h{display:flex;align-items:baseline;gap:10px;margin:0 0 4px}
-  .states-h .n{font-size:15px;font-weight:800}
-  .states-h .k{font-family:var(--mono);font-size:11px;color:var(--state);letter-spacing:.1em}
-  .states .lead{color:var(--muted);font-size:12px;margin:6px 0 18px;max-width:900px;line-height:1.5}
-  .states .lead b{color:var(--ink)}
-  .states-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .st{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:11px 12px}
-  .st .ti{font-size:12.5px;font-weight:700;color:var(--ink);margin:0 0 4px}
-  .st .on{font-family:var(--mono);font-size:9.5px;color:var(--state);letter-spacing:.05em}
-  .st .de{font-size:11px;color:var(--muted);line-height:1.4;margin-top:4px}
-  /* auth flow band */
-  .flow{margin:30px 8px 0;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--auth);
-    border-radius:16px;padding:20px 22px 24px}
-  .flow-h{display:flex;align-items:baseline;gap:10px;margin:0 0 4px}
-  .flow-h .n{font-size:15px;font-weight:800}
-  .flow-h .k{font-family:var(--mono);font-size:11px;color:var(--auth);letter-spacing:.1em}
-  .flow .lead{color:var(--muted);font-size:12px;margin:6px 0 20px;max-width:1000px;line-height:1.5}
-  .flow .lead b{color:var(--ink)}
-  .flow-row{display:flex;align-items:stretch;gap:0;flex-wrap:nowrap}
-  .step{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:13px;padding:13px 14px;position:relative}
-  .step .num{position:absolute;top:-10px;left:14px;width:22px;height:22px;border-radius:50%;background:var(--auth);
-    color:#0b0c0e;font-weight:800;font-size:11px;display:grid;place-items:center;font-family:var(--mono)}
-  .step .actor{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;margin:6px 0 6px;font-weight:700}
-  .step.g .actor{color:var(--gerant)} .step.b .actor{color:var(--auth)} .step.k .actor{color:var(--office)}
-  .step .ti{font-size:13px;font-weight:700;margin:0 0 5px}
-  .step .de{font-size:11px;color:var(--muted);line-height:1.45}
-  .step .de b{color:var(--ink)}
-  .step .ref{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:9px;color:var(--dim);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
-  .arrow{flex:0 0 34px;display:grid;place-items:center;color:var(--dim);font-size:20px}
-  .flow-note{margin-top:16px;padding:10px 14px;border:1px dashed var(--line-strong);border-radius:10px;
-    font-size:11.5px;color:var(--muted);line-height:1.5;max-width:1000px}
-  .flow-note b{color:var(--ink)}
-  /* ============ ARBRE SITEMAP (style PDF BLACKBOX Paris, fond sombre) ============ */
-  .tree{padding:54px 80px 120px;width:max-content;min-width:100%;display:flex;flex-direction:column;align-items:center}
-  .tree .root{display:flex;flex-direction:column;align-items:center;gap:0}
-  /* nœud noir encadré (le style PDF) */
-  .node{background:#000;border:1px solid var(--line-strong);border-radius:9px;padding:9px 15px;
-    text-align:center;max-width:230px;position:relative}
-  .node .ti{font-size:12px;font-weight:700;color:var(--ink);letter-spacing:.01em;line-height:1.3}
-  .node .de{font-size:10.5px;color:var(--muted);line-height:1.4;margin-top:5px;font-weight:400}
-  .node .id{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;margin-bottom:3px;display:block}
-  /* nœud racine — plus grand, accent laiton */
-  .node.rt{border-color:var(--line-strong);padding:12px 26px;border-radius:11px}
-  .node.rt .ti{font-size:14px;letter-spacing:.14em}
-  /* nœud de zone (A/B/C) — coloré par la légende */
-  .node.zn{border-color:var(--z);background:#0e0f12}
-  .node.zn .ti{color:var(--z);letter-spacing:.06em}
-  /* nœud écran-clé */
-  .node.key .ti::after{content:"◆";color:var(--z);font-size:8px;margin-left:6px;vertical-align:middle}
-  /* nœud d'annotation (les notes grises du PDF : « Retirer la newsletter… ») — sans cadre */
-  .note{max-width:210px;text-align:center;font-size:10.5px;color:var(--muted);line-height:1.45;padding:4px 8px}
+
+  .tree{padding:90px 110px 130px;width:max-content;display:flex;flex-direction:column;align-items:center}
+  .root{display:flex;flex-direction:column;align-items:center;gap:0}
+
+  /* ---- title bloc (style propale) ---- */
+  .htitle{text-align:center;margin:0 0 10px}
+  .htitle h1{font-size:58px;font-weight:800;letter-spacing:-.02em;margin:0;line-height:.98}
+  .htitle .k{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim);font-weight:700;margin:0 0 16px}
+  .htitle .sub{color:var(--muted);font-size:14px;margin:18px auto 0;max-width:640px;line-height:1.55}
+  .htitle .sub b{color:var(--ink);font-weight:600}
+
+  /* ---- node card ---- */
+  .node{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 20px;
+    text-align:left;width:230px;position:relative;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+  .node .ti{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.01em;line-height:1.25}
+  .node .id{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--z,var(--dim));font-weight:600;display:block;margin-bottom:7px}
+  /* la ligne "quoi" — cachée par défaut, révélée au hover (demande de Kevin) */
+  .node .de{font-size:12px;color:var(--muted);line-height:1.4;margin-top:0;max-height:0;opacity:0;overflow:hidden;
+    transition:max-height .2s ease,opacity .2s ease,margin-top .2s ease}
+  .node:hover{transform:translateY(-3px);border-color:var(--z,var(--line-strong));box-shadow:0 16px 40px -18px rgba(0,0,0,.9)}
+  .node:hover .de{max-height:80px;opacity:1;margin-top:8px}
+
+  /* badge numéro d'étape de parcours (style timeline propale) */
+  .node .step{position:absolute;top:-13px;left:18px;width:26px;height:26px;border-radius:50%;
+    background:var(--z,#fff);color:#000;font-weight:800;font-size:12px;display:grid;place-items:center;
+    font-family:var(--mono);box-shadow:0 0 0 4px #000}
+
+  /* écran clé — diamant accent */
+  .node.key .ti::after{content:"◆";color:var(--z);font-size:9px;margin-left:8px;vertical-align:middle}
+
+  /* nœud racine — grand, blanc, pilule (le "SOMMAIRE" propale) */
+  .node.rt{width:auto;background:#0d0d0e;border-color:var(--line-strong);border-radius:22px;padding:22px 40px;text-align:center}
+  .node.rt .ti{font-size:22px;letter-spacing:.06em;font-weight:800}
+  .node.rt .de{max-height:60px;opacity:1;margin-top:9px;text-align:center;color:var(--muted);font-size:13px}
+
+  /* en-tête de zone A/B/C — pilule colorée */
+  .zone-head{background:#0d0d0e;border:1.5px solid var(--z);border-radius:18px;padding:15px 26px;text-align:center;width:auto}
+  .zone-head .k{font-family:var(--mono);font-size:12px;color:var(--z);letter-spacing:.12em;font-weight:700}
+  .zone-head .n{font-size:18px;font-weight:800;letter-spacing:.01em;margin-top:3px}
+  .zone-head .who{color:var(--muted);font-size:11.5px;margin-top:6px;font-weight:400;letter-spacing:.01em}
+
+  /* label de section entre écrans */
+  .glabel{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:700;margin:6px 0 2px;text-align:center}
+
+  /* ---- connecteurs de parcours ---- */
+  .vbar{width:2px;background:var(--line-strong)}
+  .vbar.flow{background:var(--flow)}
+  .vbar.h26{height:26px} .vbar.h34{height:34px} .vbar.h44{height:44px} .vbar.h60{height:60px}
+  /* flèche vers le bas (parcours) */
+  .down{display:flex;flex-direction:column;align-items:center;color:var(--flow)}
+  .down .v{width:2px;height:30px;background:var(--flow)}
+  .down .a{font-size:15px;line-height:.6;margin-top:-2px;color:var(--flow)}
+
+  /* rangée des 3 branches + barre horizontale qui les relie à la racine */
+  .branch{display:flex;align-items:flex-start;justify-content:center;gap:70px;position:relative;padding-top:44px}
+  .branch::before{content:"";position:absolute;top:0;left:16.6%;right:16.6%;height:2px;background:var(--line-strong)}
+  .limb{display:flex;flex-direction:column;align-items:center;gap:0;position:relative}
+  .limb::before{content:"";position:absolute;top:-44px;width:2px;height:44px;background:var(--line-strong)}
+
+  /* colonne d'écrans empilés (le parcours vertical, lu de haut en bas) */
+  .stack{display:flex;flex-direction:column;align-items:center;gap:0;margin-top:14px}
+
+  /* ---- pont inter-colonnes (checkout → back-office) ---- */
+  .bridge{position:absolute;z-index:5;pointer-events:none}
+  .bridge svg{overflow:visible}
+  .bridge .lab{fill:var(--muted);font:600 11px var(--sans);letter-spacing:.02em}
+
+  /* petite note contextuelle discrète */
+  .note{width:230px;text-align:left;font-size:11.5px;color:var(--muted);line-height:1.45;padding:10px 14px;
+    border:1px dashed var(--line-strong);border-radius:12px;background:transparent}
   .note b{color:var(--ink);font-weight:600}
-  /* connecteurs : traits verticaux/horizontaux entre niveaux */
-  .vbar{width:1px;height:26px;background:var(--line-strong)}
-  .vbar.sm{height:16px}
-  /* rangée de branches (les enfants côte à côte) reliés par une barre horizontale */
-  .branch{display:flex;align-items:flex-start;justify-content:center;gap:26px;position:relative}
-  .branch::before{content:"";position:absolute;top:0;left:var(--l,10%);right:var(--r,10%);height:1px;background:var(--line-strong)}
-  .limb{display:flex;flex-direction:column;align-items:center}
-  /* colonne d'écrans empilés verticalement (comme les sections du PDF) */
-  .stack{display:flex;flex-direction:column;align-items:center;gap:0}
-  .stack .node{margin-top:0}
-  /* petit label de groupe entre les écrans (Commande / Suivi…) */
-  .glabel{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:700;margin:14px 0 8px}
+
+  /* ---- footer minimal : juste le parcours principal en 1 ligne ---- */
+  .legendbar{margin-top:70px;display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;
+    color:var(--muted);font-size:12.5px;letter-spacing:.01em}
+  .legendbar .p{display:inline-flex;align-items:center;gap:9px}
+  .legendbar .c{font-family:var(--mono);font-weight:700;color:var(--ink);background:var(--card);
+    border:1px solid var(--line);border-radius:8px;padding:4px 9px;font-size:11.5px}
+  .legendbar .ar{color:var(--flow);font-size:15px}
+  .foot-brand{margin-top:34px;display:flex;align-items:center;gap:9px;justify-content:center;opacity:.5}
+  .foot-brand svg{width:18px;height:18px}
+  .foot-brand .t{font-weight:800;letter-spacing:.12em;font-size:12px}
+
   /* zoom controls */
-  .zc{position:fixed;right:18px;bottom:18px;z-index:20;display:flex;gap:8px}
-  .zc button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--panel);
+  .zc{position:fixed;right:20px;bottom:20px;z-index:20;display:flex;gap:8px}
+  .zc button{width:40px;height:40px;border-radius:11px;border:1px solid var(--line);background:var(--panel);
     color:var(--ink);font-size:17px;cursor:pointer;display:grid;place-items:center;transition:border-color .15s}
   .zc button:hover{border-color:var(--line-strong)}
 </style>
 </head>
 <body>
-  <!-- PIN gate — dissuasif (le vrai rempart = repo privé + lien non deviné). ponytail: pas de crypto, juste un mur d'entrée -->
-  <div id="gate" style="position:fixed;inset:0;z-index:100;background:#0b0c0e;display:grid;place-items:center;font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+  <!-- PIN gate — dissuasif. ponytail: pas de crypto, juste un mur d'entrée -->
+  <div id="gate" style="position:fixed;inset:0;z-index:100;background:#000;display:grid;place-items:center;font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
     <div style="text-align:center;max-width:320px;padding:0 24px">
-      <svg viewBox="0 0 178 178" style="width:34px;height:34px;margin-bottom:22px" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M177.036 177.036H0V0H177.036V177.036ZM18.1603 79.4379H62.1975V97.5982H18.1603V158.876H79.4379V18.1603H18.1603V79.4379ZM97.5982 158.876H158.876V97.5982H114.769V79.4379H158.876V18.1603H97.5982V158.876Z" fill="#f4f5f7"/></svg>
-      <div style="color:#6b7078;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:18px">BLACKBOX Store · confidentiel</div>
+      <svg viewBox="0 0 178 178" style="width:36px;height:36px;margin-bottom:24px" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M177.036 177.036H0V0H177.036V177.036ZM18.1603 79.4379H62.1975V97.5982H18.1603V158.876H79.4379V18.1603H18.1603V79.4379ZM97.5982 158.876H158.876V97.5982H114.769V79.4379H158.876V18.1603H97.5982V158.876Z" fill="#fff"/></svg>
+      <div style="color:#5a5a5f;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:20px">BLACKBOX Store · confidentiel</div>
       <input id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="Code d'accès" maxlength="8"
-        style="width:100%;padding:13px 15px;background:#171a1f;border:1px solid rgba(255,255,255,.14);border-radius:12px;color:#f4f5f7;font-size:16px;text-align:center;letter-spacing:.3em;outline:none">
-      <div id="pinerr" style="height:18px;margin-top:10px;color:#c9605a;font-size:12px"></div>
+        style="width:100%;padding:14px 15px;background:#161617;border:1px solid rgba(255,255,255,.14);border-radius:12px;color:#fff;font-size:16px;text-align:center;letter-spacing:.3em;outline:none">
+      <div id="pinerr" style="height:18px;margin-top:10px;color:#e0655f;font-size:12px"></div>
     </div>
   </div>
   <script>
@@ -179,15 +149,14 @@
 
   <div class="topbar">
     <div class="brand">
-      <svg viewBox="0 0 178 178" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M177.036 177.036H0V0H177.036V177.036ZM18.1603 79.4379H62.1975V97.5982H18.1603V158.876H79.4379V18.1603H18.1603V79.4379ZM97.5982 158.876H158.876V97.5982H114.769V79.4379H158.876V18.1603H97.5982V158.876Z" fill="#f4f5f7"/></svg>
-      <div><span class="t">BLACKBOX STORE</span> <span class="s">Sitemap · architecture écrans</span></div>
+      <svg viewBox="0 0 178 178" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M177.036 177.036H0V0H177.036V177.036ZM18.1603 79.4379H62.1975V97.5982H18.1603V158.876H79.4379V18.1603H18.1603V79.4379ZM97.5982 158.876H158.876V97.5982H114.769V79.4379H158.876V18.1603H97.5982V158.876Z" fill="#fff"/></svg>
+      <div><span class="t">BLACKBOX STORE</span> <span class="s">Sitemap · parcours écrans</span></div>
     </div>
     <div class="legend">
-      <b><span class="dot" style="background:var(--auth)"></span>Auth</b>
-      <b><span class="dot" style="background:var(--gerant)"></span>Front gérant (B2B)</b>
+      <b><span class="dot" style="background:var(--auth)"></span>Accès</b>
+      <b><span class="dot" style="background:var(--gerant)"></span>Gérant (B2B)</b>
       <b><span class="dot" style="background:var(--office)"></span>Back-office</b>
-      <b><span class="dot" style="background:var(--state)"></span>États à maquetter</b>
-      <span class="hint">◆ = écran clé · glisser pour naviguer · molette / +− zoom</span>
+      <span class="hint">◆ écran clé · ① ordre du parcours · survol = détail · glisser / molette pour naviguer</span>
     </div>
   </div>
 
@@ -196,168 +165,130 @@
       <div class="tree">
        <div class="root">
 
-        <!-- ── RACINE ── -->
-        <div class="node rt"><div class="ti">BLACKBOX STORE</div><div class="de">Plateforme B2B de réassort salons · KHube pilote, Shopify moteur caché</div></div>
-        <div class="vbar"></div>
+        <!-- ── TITRE + RACINE ── -->
+        <div class="htitle">
+          <div class="k">D-Studio · Architecture</div>
+          <h1>BLACKBOX STORE</h1>
+          <p class="sub">Plateforme B2B de réassort salons. <b>Shopify est le moteur caché</b> (catalogue, taxes, paiement), <b>KHube orchestre</b> le métier salon. Les flèches ① → ⑦ montrent le <b>parcours réel</b> d'un écran à l'autre.</p>
+        </div>
 
-        <!-- ── sous-racine : contexte ── -->
-        <div class="note"><b>Pas de checkout Shopify</b> côté Store — paiement Stripe orchestré par KHube. ~27 écrans cadre + états + flow barber.</div>
-        <div class="vbar"></div>
+        <div class="vbar h60"></div>
 
         <!-- ── 3 BRANCHES : A / B / C ── -->
-        <div class="branch" style="--l:16%;--r:16%">
+        <div class="branch">
 
-          <!-- ========= LIMB A · AUTH ========= -->
+          <!-- ========= LIMB A · AUTH (la porte) ========= -->
           <div class="limb" style="--z:var(--auth)">
-            <div class="vbar sm"></div>
-            <div class="node zn"><div class="ti">A · Auth</div><div class="de">La porte — accès gérant par matricule</div></div>
-            <div class="vbar"></div>
+            <div class="zone-head"><div class="k">A</div><div class="n">Accès</div><div class="who">La porte · connexion par matricule</div></div>
             <div class="stack">
-              <div class="node key" style="--z:var(--auth)"><span class="id" style="color:var(--auth)">A1</span><div class="ti">Login matricule</div><div class="de">Matricule + secret · 2 rôles gérant / barber</div></div>
-              <div class="vbar sm"></div>
-              <div class="node" style="--z:var(--auth)"><span class="id" style="color:var(--auth)">A2</span><div class="ti">États d'accès (refus)</div><div class="de">Inconnu · suspendu · salon fermé · sans droit</div></div>
-              <div class="vbar sm"></div>
-              <div class="node key" style="--z:var(--auth)"><span class="id" style="color:var(--auth)">A3</span><div class="ti">1ʳᵉ connexion — mandat Stripe</div><div class="de">Mandat SEPA/carte avant toute commande</div></div>
-              <div class="vbar sm"></div>
-              <div class="node key" style="--z:var(--auth)"><span class="id" style="color:var(--auth)">A4</span><div class="ti">Activation compte barber</div><div class="de">Matricule + code invit + OTP SMS → accès scopé salon</div></div>
+              <div class="node key" style="--z:var(--auth)"><span class="step">①</span><span class="id">A1</span><div class="ti">Login matricule</div><div class="de">Matricule + secret · 2 rôles : gérant / barber</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node" style="--z:var(--auth)"><span class="id">A2</span><div class="ti">États d'accès (refus)</div><div class="de">Inconnu · suspendu · salon fermé · sans droit</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node key" style="--z:var(--auth)"><span class="step">②</span><span class="id">A3</span><div class="ti">1ʳᵉ connexion — mandat Stripe</div><div class="de">Mandat SEPA/carte obligatoire avant toute commande</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node key" style="--z:var(--auth)"><span class="id">A4</span><div class="ti">Activation barber</div><div class="de">Matricule + code invit + OTP SMS → accès scopé salon</div></div>
             </div>
           </div>
 
-          <!-- ========= LIMB B · FRONT GÉRANT ========= -->
+          <!-- ========= LIMB B · FRONT GÉRANT (le gros du parcours) ========= -->
           <div class="limb" style="--z:var(--gerant)">
-            <div class="vbar sm"></div>
-            <div class="node zn"><div class="ti">B · Front gérant</div><div class="de">14 écrans — la surface la plus soignée</div></div>
-            <div class="vbar"></div>
+            <div class="zone-head"><div class="k">B</div><div class="n">Front gérant</div><div class="who">14 écrans · la surface la plus soignée</div></div>
             <div class="stack">
-              <div class="note">◇ <b>Sélecteur de salon actif</b> — composant partout · un panier PAR salon (scindé)</div>
-              <div class="glabel">Contexte salon</div>
-              <div class="node key" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B1</span><div class="ti">Mes salons (accueil)</div><div class="de">Salons rattachés + centre d'alertes</div></div>
+              <div class="note">◇ <b>Sélecteur de salon actif</b> — présent partout · un panier <b>par salon</b> (scindé, jamais vidé)</div>
+              <div class="vbar flow h26"></div>
+
+              <div class="glabel">Contexte</div>
+              <div class="node key" style="--z:var(--gerant)"><span class="step">③</span><span class="id">B1</span><div class="ti">Mes salons (accueil)</div><div class="de">Salons rattachés + centre d'alertes</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+
               <div class="glabel">Commande</div>
-              <div class="node key" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B3</span><div class="ti">Catalogue B2B</div><div class="de">Consommables pro autorisés · salon affiché</div></div>
-              <div class="vbar sm"></div>
-              <div class="node" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B4</span><div class="ti">Fiche produit B2B</div><div class="de">Conditionnement, prix pro, ajout panier</div></div>
-              <div class="vbar sm"></div>
-              <div class="node key" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B5</span><div class="ti">Panier B2B</div><div class="de">Récap + salon · validation serveur</div></div>
-              <div class="vbar sm"></div>
-              <div class="node key" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B6</span><div class="ti">Checkout — adresses pré-remplies</div><div class="de">Verrouillé par salon · mandat Stripe, zéro carte</div></div>
-              <div class="vbar sm"></div>
-              <div class="node" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B7</span><div class="ti">Confirmation commande</div><div class="de">Salon + délai estimé + récap</div></div>
-              <div class="glabel">Suivi & historique</div>
-              <div class="node" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B8</span><div class="ti">Historique (filtre salon)</div><div class="de">Par salon / période · statut, montant</div></div>
-              <div class="vbar sm"></div>
-              <div class="node" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B9</span><div class="ti">Détail commande + tracking</div><div class="de">Lignes, statut fournisseur, facture PDF</div></div>
-              <div class="vbar sm"></div>
-              <div class="node key" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B10</span><div class="ti">Réassort / recommander (1 clic)</div><div class="de">Réitérer une commande + réassort suggéré</div></div>
-              <div class="vbar sm"></div>
-              <div class="node" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B11</span><div class="ti">SAV / retour / avoir</div><div class="de">Retour PARTIEL par ligne · total = tout coché</div></div>
-              <div class="glabel">Compte gérant</div>
-              <div class="node" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B12</span><div class="ti">Mon compte (onglets)</div><div class="de">Mandat · factures · adresses salon</div></div>
-              <div class="glabel">Retraits clients · pont phygital</div>
-              <div class="note">◇ <b>Gérant + barber (accès allégé)</b> — barber remet les colis, restreint à B14/B15</div>
-              <div class="node key" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B16</span><div class="ti">Mon équipe (gérant)</div><div class="de">Invite ses barbers · rattache aux salons</div></div>
-              <div class="vbar sm"></div>
-              <div class="node key" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B14</span><div class="ti">Colis clients à remettre</div><div class="de">Capsule / Cosmétique arrivés au salon</div></div>
-              <div class="vbar sm"></div>
-              <div class="node" style="--z:var(--gerant)"><span class="id" style="color:var(--gerant)">B15</span><div class="ti">Détail colis + remise</div><div class="de">Vérif code → « remis » → notif client</div></div>
+              <div class="node key" style="--z:var(--gerant)"><span class="step">④</span><span class="id">B3</span><div class="ti">Catalogue B2B</div><div class="de">Consommables pro autorisés · salon affiché</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node" style="--z:var(--gerant)"><span class="id">B4</span><div class="ti">Fiche produit</div><div class="de">Conditionnement, prix pro, ajout panier</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node key" style="--z:var(--gerant)"><span class="step">⑤</span><span class="id">B5</span><div class="ti">Panier B2B</div><div class="de">Récap par salon · validation serveur</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node key" style="--z:var(--gerant)"><span class="step">⑥</span><span class="id">B6</span><div class="ti">Checkout</div><div class="de">Adresses pré-remplies · mandat Stripe, zéro carte à saisir</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node" style="--z:var(--gerant)" id="b7"><span class="step">⑦</span><span class="id">B7</span><div class="ti">Confirmation</div><div class="de">Salon + délai estimé + récap → déclenche le back-office</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+
+              <div class="glabel">Suivi</div>
+              <div class="node" style="--z:var(--gerant)"><span class="id">B8</span><div class="ti">Historique</div><div class="de">Filtre salon / période · statut, montant</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node" style="--z:var(--gerant)"><span class="id">B9</span><div class="ti">Détail + tracking</div><div class="de">Lignes, statut fournisseur, facture PDF</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node key" style="--z:var(--gerant)"><span class="id">B10</span><div class="ti">Réassort 1 clic</div><div class="de">Réitérer une commande + réassort suggéré</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node" style="--z:var(--gerant)"><span class="id">B11</span><div class="ti">SAV / retour / avoir</div><div class="de">Retour partiel par ligne · total = tout coché</div></div>
+
+              <div class="glabel">Compte &amp; équipe</div>
+              <div class="node" style="--z:var(--gerant)"><span class="id">B12</span><div class="ti">Mon compte</div><div class="de">Mandat · factures · adresses salon</div></div>
+              <div class="vbar flow h26"></div>
+              <div class="node key" style="--z:var(--gerant)"><span class="id">B16</span><div class="ti">Mon équipe</div><div class="de">Invite ses barbers · rattache aux salons</div></div>
+
+              <div class="glabel">Retrait client · pont phygital</div>
+              <div class="node key" style="--z:var(--gerant)"><span class="id">B14</span><div class="ti">Colis à remettre</div><div class="de">Capsule / Cosmétique arrivés au salon</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node" style="--z:var(--gerant)"><span class="id">B15</span><div class="ti">Remise colis</div><div class="de">Vérif code → « remis » → notif client (gérant ou barber)</div></div>
             </div>
           </div>
 
-          <!-- ========= LIMB C · BACK-OFFICE ========= -->
+          <!-- ========= LIMB C · BACK-OFFICE (D-Studio) ========= -->
           <div class="limb" style="--z:var(--office)">
-            <div class="vbar sm"></div>
-            <div class="node zn"><div class="ti">C · Back-office</div><div class="de">9 écrans — équipe D-Studio, interne</div></div>
-            <div class="vbar"></div>
+            <div class="zone-head"><div class="k">C</div><div class="n">Back-office</div><div class="who">9 écrans · équipe D-Studio, interne</div></div>
             <div class="stack">
-              <div class="glabel">Fournisseurs & dropshipping</div>
-              <div class="node" style="--z:var(--office)"><span class="id" style="color:var(--office)">C4</span><div class="ti">Gestion fournisseurs</div><div class="de">Mode (API/email/manuel), credentials, SLA</div></div>
-              <div class="vbar sm"></div>
-              <div class="node key" style="--z:var(--office)"><span class="id" style="color:var(--office)">C5</span><div class="ti">Mapping produit ↔ fournisseur</div><div class="de">Obligatoire avant publication Store</div></div>
-              <div class="vbar sm"></div>
-              <div class="node key" style="--z:var(--office)"><span class="id" style="color:var(--office)">C6</span><div class="ti">Commandes fournisseurs</div><div class="de">State machine statuts · tracking · relance</div></div>
-              <div class="vbar sm"></div>
-              <div class="node key" style="--z:var(--office)"><span class="id" style="color:var(--office)">C7</span><div class="ti">Dashboard « à traiter »</div><div class="de">Erreurs, ruptures, mapping manquant</div></div>
-              <div class="glabel">Paiement & recouvrement</div>
-              <div class="node key" style="--z:var(--office)"><span class="id" style="color:var(--office)">C8</span><div class="ti">Dashboard prélèvements Stripe</div><div class="de">Mandats · réconciliation commandes</div></div>
-              <div class="vbar sm"></div>
-              <div class="node" style="--z:var(--office)"><span class="id" style="color:var(--office)">C9</span><div class="ti">Détail mandat / franchisé</div><div class="de">1 franchisé = 1 client Stripe, N salons</div></div>
-              <div class="glabel">Reporting</div>
-              <div class="node" style="--z:var(--office)"><span class="id" style="color:var(--office)">C10</span><div class="ti">Dashboards + exports</div><div class="de">Par salon · états · paiements · CSV</div></div>
-              <div class="glabel">Système</div>
-              <div class="node" style="--z:var(--office)"><span class="id" style="color:var(--office)">C12</span><div class="ti">Logs / audit</div><div class="de">Journal des mutations back-office</div></div>
-              <div class="vbar sm"></div>
-              <div class="node" style="--z:var(--office)"><span class="id" style="color:var(--office)">C13</span><div class="ti">Monitoring intégrations</div><div class="de">Webhooks Shopify / Stripe / fournisseurs</div></div>
+              <div class="note" id="c-in">↳ Reçoit les commandes validées du <b>parcours gérant</b> (après ⑦)</div>
+              <div class="vbar flow h26"></div>
+
+              <div class="glabel">Fournisseurs &amp; dropshipping</div>
+              <div class="node" style="--z:var(--office)"><span class="id">C4</span><div class="ti">Gestion fournisseurs</div><div class="de">Mode (API/email/manuel), credentials, SLA</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node key" style="--z:var(--office)"><span class="id">C5</span><div class="ti">Mapping produit ↔ fournisseur</div><div class="de">Obligatoire avant publication Store</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node key" style="--z:var(--office)"><span class="id">C6</span><div class="ti">Commandes fournisseurs</div><div class="de">State machine statuts · tracking · relance</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node key" style="--z:var(--office)"><span class="id">C7</span><div class="ti">Dashboard « à traiter »</div><div class="de">Erreurs, ruptures, mapping manquant</div></div>
+
+              <div class="glabel">Paiement &amp; recouvrement</div>
+              <div class="node key" style="--z:var(--office)"><span class="id">C8</span><div class="ti">Prélèvements Stripe</div><div class="de">Mandats · réconciliation commandes</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node" style="--z:var(--office)"><span class="id">C9</span><div class="ti">Détail mandat / franchisé</div><div class="de">1 franchisé = 1 client Stripe, N salons</div></div>
+
+              <div class="glabel">Reporting &amp; système</div>
+              <div class="node" style="--z:var(--office)"><span class="id">C10</span><div class="ti">Dashboards + exports</div><div class="de">Par salon · états · paiements · CSV</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node" style="--z:var(--office)"><span class="id">C12</span><div class="ti">Logs / audit</div><div class="de">Journal des mutations back-office</div></div>
+              <div class="down"><div class="v"></div><div class="a">▼</div></div>
+              <div class="node" style="--z:var(--office)"><span class="id">C13</span><div class="ti">Monitoring intégrations</div><div class="de">Webhooks Shopify / Stripe / fournisseurs</div></div>
             </div>
           </div>
 
         </div>
+
+        <!-- ── PONT B7 → C : dessiné en SVG, recalculé au zoom/pan ── -->
+        <svg class="bridge" id="bridge" xmlns="http://www.w3.org/2000/svg"></svg>
+
+        <!-- ── récap parcours en 1 ligne (remplace les 3 pavés de doc) ── -->
+        <div class="legendbar">
+          <span class="p"><span class="c">A1</span></span><span class="ar">→</span>
+          <span class="p"><span class="c">A3</span></span><span class="ar">→</span>
+          <span class="p"><span class="c">B1</span></span><span class="ar">→</span>
+          <span class="p"><span class="c">B3</span></span><span class="ar">→</span>
+          <span class="p"><span class="c">B5</span></span><span class="ar">→</span>
+          <span class="p"><span class="c">B6</span></span><span class="ar">→</span>
+          <span class="p"><span class="c">B7</span></span><span class="ar">→</span>
+          <span class="p"><span class="c">C6</span></span>
+          <span style="color:var(--dim);margin-left:8px">le chemin d'une commande, bout en bout</span>
+        </div>
+
+        <div class="foot-brand">
+          <svg viewBox="0 0 178 178" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M177.036 177.036H0V0H177.036V177.036ZM18.1603 79.4379H62.1975V97.5982H18.1603V158.876H79.4379V18.1603H18.1603V79.4379ZM97.5982 158.876H158.876V97.5982H114.769V79.4379H158.876V18.1603H97.5982V158.876Z" fill="#fff"/></svg>
+          <span class="t">D-STUDIO.</span>
+        </div>
+
        </div>
-
-
-        <!-- ====== ÉTATS CRITIQUES À MAQUETTER ====== -->
-        <section class="states">
-          <div class="states-h"><span class="k">É</span><span class="n">États critiques à maquetter</span><span class="count" style="--z:var(--state)">≈ 6 frames</span></div>
-          <p class="lead">Ce ne sont pas des écrans en plus — ce sont des <b>états d'écrans existants</b>. Mais « un état non listé = un état non dessiné » : ils demandent chacun un vrai temps de conception et le happy-path seul ne tient pas en prod. <b>À briefer explicitement, pas « et les états usuels ».</b></p>
-          <div class="states-grid">
-            <div class="st"><div class="ti">Mandat en échec / en validation</div><div class="on">sur A3 + B6 + B12</div><div class="de">Le SEPA peut mettre ~14j à se confirmer, ou être refusé. Le gérant doit être bloqué/informé <b>avant</b> le checkout — sinon il ne peut rien commander le jour J. Risque #1.</div></div>
-            <div class="st"><div class="ti">Panier vide</div><div class="on">sur B5</div><div class="de">L'état zéro-article, trivial mais toujours oublié. Guide vers le catalogue.</div></div>
-            <div class="st"><div class="ti">Catalogue / recherche sans résultat</div><div class="on">sur B3</div><div class="de">Empty state de recherche et de filtre à vide.</div></div>
-            <div class="st"><div class="ti">Rupture fournisseur (côté gérant)</div><div class="on">sur B9</div><div class="de">Aujourd'hui la rupture n'est traitée que côté back-office (C7). Que voit le gérant ? Bandeau « retard fournisseur » + alerte.</div></div>
-            <div class="st"><div class="ti">1ère commande / dashboard vide</div><div class="on">sur B1</div><div class="de">Le tout premier écran après le mandat, sans historique : oriente vers le catalogue au lieu d'un dashboard vide.</div></div>
-            <div class="st"><div class="ti">Centre d'alertes gérant</div><div class="on">panneau sur B1</div><div class="de">Vue centralisée « commande retardée / mandat à renouveler / avoir émis » — le gérant revient peu souvent, il ne doit pas découvrir un incident par hasard.</div></div>
-            <div class="st"><div class="ti">Colis client en retard (>J+7)</div><div class="on">sur B14</div><div class="de">Colis non retiré après J+7 : l'alerte « à traiter » que le CDC prévoit côté salon (relance client ou retour).</div></div>
-          </div>
-        </section>
-
-        <!-- ====== FLOW AUTH BARBER ====== -->
-        <section class="flow">
-          <div class="flow-h"><span class="k">⟶</span><span class="n">Flow d'auth — Barber (rattachement à un salon)</span><span class="count" style="--z:var(--auth)">A4 + B16</span></div>
-          <p class="lead">Un barber n'a <b>pas</b> de compte Store à l'origine et ne peut <b>jamais s'auto-inscrire</b>. Son appartenance à un salon (donc à un gérant/franchise) est <b>créée par l'invitation du gérant</b>. Les données identité viennent de <b>BLACKBOX Inside</b> (le siège les détient) mais <b>l'API/le câblage Inside est à notre charge</b> (D-Studio) → le flow fonctionne même sans Inside prêt, et se synchronise avec quand l'API sera branchée.</p>
-
-          <div class="flow-row">
-            <div class="step g"><span class="num">1</span><div class="actor">Gérant · Store</div><div class="ti">Invite le barber</div><div class="de">Depuis « Mon équipe » : saisit nom + <b>matricule</b>, choisit le/les <b>salon(s)</b> de rattachement. KHube crée un compte barber « en attente », rôle restreint.</div><span class="ref">B16</span></div>
-            <div class="arrow">→</div>
-            <div class="step k"><span class="num">2</span><div class="actor">KHube · API</div><div class="ti">Émet l'invitation</div><div class="de">Envoie lien + code par <b>SMS/email</b> (Twilio/Resend). [Rapprochement auto avec les données <b>Inside</b> quand l'API sera branchée.]</div><span class="ref">API KHube</span></div>
-            <div class="arrow">→</div>
-            <div class="step b"><span class="num">3</span><div class="actor">Barber · 1ère fois</div><div class="ti">Active son espace</div><div class="de">Ouvre le lien → vérif « la totale » : <b>matricule + code d'invitation + OTP SMS</b> → définit son secret. Il n'active QUE ce à quoi il a été invité.</div><span class="ref">A4</span></div>
-            <div class="arrow">→</div>
-            <div class="step b"><span class="num">4</span><div class="actor">Barber · connecté</div><div class="ti">Accès allégé</div><div class="de">Voit <b>uniquement</b> les colis à remettre (B14/B15) de <b>son/ses salon(s)</b>. Ni catalogue, ni prix, ni paiement.</div><span class="ref">B14 · B15</span></div>
-          </div>
-
-          <div class="flow-note">🔑 <b>Le droit d'accès = l'invitation, pas la déclaration.</b> Le barber appartient à un salon <b>parce que le gérant l'a rattaché</b> — l'identité peut venir d'Inside, mais le droit est créé par KHube. Connexions suivantes : matricule + secret (ou OTP) → direct sur les colis de son salon. Désactivation possible par le gérant (barber qui quitte le salon).</div>
-        </section>
-
-        <div class="engine" style="--z:var(--office)">
-          🔒&nbsp;<span><b>Shopify = moteur caché.</b> Catalogue, commande, taxes, paiement réglementé restent Shopify, <b>invisibles pour le gérant</b>. <b>✅ Décision : la gestion du catalogue produit (créer/éditer produit, prix, variantes) se fait dans Shopify Admin</b> — pas d'écran catalogue à dessiner. vkode-office ne gère que le métier que Shopify ne connaît pas : <b>mapping fournisseur (C5), dropshipping, salons, prélèvements</b>.</span>
-        </div>
-
-        <div class="foot">
-          <div class="col">
-            <h3>Parcours principal (gérant)</h3>
-            <ul>
-              <li><b>A1</b> login → <b>A3</b> mandat (1ʳᵉ fois) → <b>B1</b> mes salons → <i>[choisir salon]</i> → <b>B3</b> catalogue → <b>B5</b> panier → <b>B6</b> checkout → <b>B7</b> confirmation → <b>B9</b> suivi.</li>
-              <li>Réassort récurrent : <b>B1</b> → <b>B10</b> (recommander en 1 clic).</li>
-              <li>Retrait client (phygital) : colis Capsule/Cosmétique arrive au salon → <b>B14</b> liste → <b>B15</b> remise (gérant <b>ou barber</b>) → notif client. Via API KHube.</li>
-            </ul>
-          </div>
-          <div class="col">
-            <h3>Décisions actées (tranchées avec Kevin)</h3>
-            <ul>
-              <li>✅ <b>Catalogue produit → Shopify Admin</b> (pas d'écran Store).</li>
-              <li>✅ <b>Click & collect</b> : front d'achat = Capsule/Cosmétique, mais le <b>versant salon (colis à remettre) EST dans Store</b> (B14/B15, gérant+barber).</li>
-              <li>✅ <b>SAV / retours → partiel par ligne</b> (le total = tout coché).</li>
-              <li>✅ <b>Panier → un par salon</b> (scindé, jamais vidé au changement) + bandeau.</li>
-              <li>⚠️ <b>Admin comptes/salons</b> (3 écrans) : réintégrés seulement si <b>Inside</b> n'est finalement pas prêt (seul point encore ouvert).</li>
-            </ul>
-          </div>
-          <div class="col">
-            <h3>Budget designer recommandé</h3>
-            <ul>
-              <li><b>~27 écrans cadre</b> + <b>~7 frames d'états</b> + le flow barber (A4/B16) + variantes mobile des écrans clés.</li>
-              <li>Ordre de grandeur honnête : <b>≈ 37–40 frames</b> pour une V1 complète (parcours + états).</li>
-            </ul>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
@@ -369,11 +300,31 @@
   </div>
 
 <script>
-// minimal pan/zoom — same feel as the other blackbox canvases, no deps
+// minimal pan/zoom — no deps
 (function(){
   const stage=document.getElementById('stage'), world=document.getElementById('world');
+  const b7=document.getElementById('b7'), cin=document.getElementById('c-in'), svg=document.getElementById('bridge');
   let scale=1, tx=0, ty=0, min=.3, max=2;
   function apply(){ world.style.transform=`translate3d(${tx}px,${ty}px,0) scale(${scale})`; }
+
+  // pont B7→C : ligne courbe dans le repère #world (donc suit le transform sans recalcul)
+  function drawBridge(){
+    const wr=world.getBoundingClientRect();
+    const a=b7.getBoundingClientRect(), c=cin.getBoundingClientRect();
+    // coords en espace non-scalé
+    const x1=(a.right-wr.left)/scale, y1=(a.top+a.height/2-wr.top)/scale;
+    const x2=(c.left-wr.left)/scale,  y2=(c.top+c.height/2-wr.top)/scale;
+    const mx=(x1+x2)/2;
+    svg.setAttribute('width', world.scrollWidth); svg.setAttribute('height', world.scrollHeight);
+    svg.style.left='0'; svg.style.top='0';
+    svg.innerHTML=`
+      <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L7,3 L0,6 Z" fill="rgba(255,255,255,.45)"/></marker></defs>
+      <path d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2-8},${y2}"
+        fill="none" stroke="rgba(255,255,255,.32)" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#ah)"/>
+      <text x="${mx}" y="${(y1+y2)/2-9}" text-anchor="middle" class="lab">commande validée</text>`;
+  }
+
   let dragging=false, sx=0, sy=0, ox=0, oy=0;
   stage.addEventListener('pointerdown',e=>{dragging=true;stage.classList.add('drag');sx=e.clientX;sy=e.clientY;ox=tx;oy=ty;stage.setPointerCapture(e.pointerId);});
   stage.addEventListener('pointermove',e=>{if(!dragging)return;tx=ox+(e.clientX-sx);ty=oy+(e.clientY-sy);apply();});
@@ -388,15 +339,19 @@
   function zoomAt(f){const r=stage.getBoundingClientRect(),mx=r.width/2,my=r.height/2;const ns=Math.min(max,Math.max(min,scale*f)),k=ns/scale;tx=mx-(mx-tx)*k;ty=my-(my-ty)*k;scale=ns;apply();}
   document.getElementById('zin').onclick=()=>zoomAt(1.15);
   document.getElementById('zout').onclick=()=>zoomAt(1/1.15);
-  // fit-to-width au chargement : l'arbre fait ~5000px, on le cadre pour voir l'ensemble
-  function fit(){
-    const cw=world.scrollWidth, ch=world.scrollHeight, vw=stage.clientWidth, vh=stage.clientHeight;
-    scale=Math.max(min, Math.min(vw/cw, vh/ch, 1)*0.94);
-    tx=(vw - cw*scale)/2; ty=14;
+
+  // au chargement : cadre lisible (pas fit-to-tiny), centré horizontalement, montre le haut de l'arbre
+  function reset(){
+    drawBridge();
+    const cw=world.scrollWidth, vw=stage.clientWidth;
+    scale=Math.min(1, Math.max(min, (vw-120)/cw));   // assez zoomé pour lire, sans déborder
+    tx=(vw - cw*scale)/2; ty=20;
     apply();
   }
-  document.getElementById('zreset').onclick=fit;
-  fit();
+  document.getElementById('zreset').onclick=reset;
+  // 2 passes : le layout se stabilise après le 1er paint (fonts, wrap)
+  requestAnimationFrame(()=>{ drawBridge(); reset(); });
+  window.addEventListener('resize', reset);
 })();
 </script>
 </body>
