@@ -145,8 +145,12 @@
   <script>
     (function(){
       var g=document.getElementById('gate'), i=document.getElementById('pin'), e=document.getElementById('pinerr');
-      function check(){ if(i.value==='14698'){ g.style.display='none'; } else { e.textContent='Code incorrect'; i.value=''; } }
-      i.addEventListener('keydown',function(ev){ if(ev.key==='Enter') check(); e.textContent=''; });
+      var CODE='14698';
+      function unlock(){ g.style.display='none'; }
+      function check(){ if(i.value===CODE){ unlock(); } else { e.textContent='Code incorrect'; i.value=''; } }
+      // desktop : Enter valide. mobile : pas de touche Enter fiable → auto-valide dès que le code complet est tapé.
+      i.addEventListener('keydown',function(ev){ if(ev.key==='Enter'){ ev.preventDefault(); check(); } });
+      i.addEventListener('input',function(){ e.textContent=''; if(i.value===CODE){ unlock(); } });
       i.focus();
     })();
   </script>

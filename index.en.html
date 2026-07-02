@@ -145,8 +145,12 @@
   <script>
     (function(){
       var g=document.getElementById('gate'), i=document.getElementById('pin'), e=document.getElementById('pinerr');
-      function check(){ if(i.value==='14698'){ g.style.display='none'; } else { e.textContent='Wrong code'; i.value=''; } }
-      i.addEventListener('keydown',function(ev){ if(ev.key==='Enter') check(); e.textContent=''; });
+      var CODE='14698';
+      function unlock(){ g.style.display='none'; }
+      function check(){ if(i.value===CODE){ unlock(); } else { e.textContent='Wrong code'; i.value=''; } }
+      // desktop: Enter submits. mobile: no reliable Enter key → auto-submit as soon as the full code is typed.
+      i.addEventListener('keydown',function(ev){ if(ev.key==='Enter'){ ev.preventDefault(); check(); } });
+      i.addEventListener('input',function(){ e.textContent=''; if(i.value===CODE){ unlock(); } });
       i.focus();
     })();
   </script>
