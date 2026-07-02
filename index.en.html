@@ -1,19 +1,19 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>BLACKBOX Store — Sitemap / Architecture écrans</title>
+<title>BLACKBOX Store — Sitemap / Screen Architecture</title>
 <style>
   :root{
     --bg:#000; --panel:#0f0f10; --panel-2:#161617; --card:#1a1a1b;
     --line:rgba(255,255,255,.10); --line-strong:rgba(255,255,255,.20);
     --ink:#ffffff; --muted:#8a8a8f; --dim:#5a5a5f;
-    --auth:#e0b64a;      /* jaune propale — l'accès / la porte */
-    --gerant:#6ea8fe;    /* bleu — surface gérant (le gros du parcours) */
-    --office:#e0655f;    /* corail propale — back-office D-Studio */
-    --flow:rgba(255,255,255,.30);   /* traits de parcours */
+    --auth:#e0b64a;      /* propale yellow — access / the door */
+    --gerant:#6ea8fe;    /* blue — manager surface (bulk of the journey) */
+    --office:#e0655f;    /* propale coral — D-Studio back-office */
+    --flow:rgba(255,255,255,.30);   /* journey lines */
     --sans:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
     --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
   }
@@ -45,7 +45,7 @@
   .tree{padding:90px 110px 130px;width:max-content;display:flex;flex-direction:column;align-items:center}
   .root{display:flex;flex-direction:column;align-items:center;gap:0}
 
-  /* ---- title bloc (style propale) ---- */
+  /* ---- title bloc (propale style) ---- */
   .htitle{text-align:center;margin:0 0 10px}
   .htitle h1{font-size:58px;font-weight:800;letter-spacing:-.02em;margin:0;line-height:.98}
   .htitle .k{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim);font-weight:700;margin:0 0 16px}
@@ -57,63 +57,63 @@
     text-align:left;width:230px;position:relative;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
   .node .ti{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.01em;line-height:1.25}
   .node .id{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--z,var(--dim));font-weight:600;display:block;margin-bottom:7px}
-  /* la ligne "quoi" — cachée par défaut, révélée au hover (demande de Kevin) */
+  /* the "what" line — hidden by default, revealed on hover */
   .node .de{font-size:12px;color:var(--muted);line-height:1.4;margin-top:0;max-height:0;opacity:0;overflow:hidden;
     transition:max-height .2s ease,opacity .2s ease,margin-top .2s ease}
   .node:hover{transform:translateY(-3px);border-color:var(--z,var(--line-strong));box-shadow:0 16px 40px -18px rgba(0,0,0,.9)}
   .node:hover .de{max-height:80px;opacity:1;margin-top:8px}
 
-  /* badge numéro d'étape de parcours (style timeline propale) */
+  /* journey step number badge (propale timeline style) */
   .node .step{position:absolute;top:-13px;left:18px;width:26px;height:26px;border-radius:50%;
     background:var(--z,#fff);color:#000;font-weight:800;font-size:12px;display:grid;place-items:center;
     font-family:var(--mono);box-shadow:0 0 0 4px #000}
 
-  /* écran clé — diamant accent */
+  /* key screen — diamond accent */
   .node.key .ti::after{content:"◆";color:var(--z);font-size:9px;margin-left:8px;vertical-align:middle}
 
-  /* nœud racine — grand, blanc, pilule (le "SOMMAIRE" propale) */
+  /* root node — big, pill (the propale "SOMMAIRE") */
   .node.rt{width:auto;background:#0d0d0e;border-color:var(--line-strong);border-radius:22px;padding:22px 40px;text-align:center}
   .node.rt .ti{font-size:22px;letter-spacing:.06em;font-weight:800}
   .node.rt .de{max-height:60px;opacity:1;margin-top:9px;text-align:center;color:var(--muted);font-size:13px}
 
-  /* en-tête de zone A/B/C — pilule colorée */
+  /* zone header A/B/C — colored pill */
   .zone-head{background:#0d0d0e;border:1.5px solid var(--z);border-radius:18px;padding:15px 26px;text-align:center;width:auto}
   .zone-head .k{font-family:var(--mono);font-size:12px;color:var(--z);letter-spacing:.12em;font-weight:700}
   .zone-head .n{font-size:18px;font-weight:800;letter-spacing:.01em;margin-top:3px}
   .zone-head .who{color:var(--muted);font-size:11.5px;margin-top:6px;font-weight:400;letter-spacing:.01em}
 
-  /* label de section entre écrans */
+  /* section label between screens */
   .glabel{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:700;margin:6px 0 2px;text-align:center}
 
-  /* ---- connecteurs de parcours ---- */
+  /* ---- journey connectors ---- */
   .vbar{width:2px;background:var(--line-strong)}
   .vbar.flow{background:var(--flow)}
   .vbar.h26{height:26px} .vbar.h34{height:34px} .vbar.h44{height:44px} .vbar.h60{height:60px}
-  /* flèche vers le bas (parcours) */
+  /* down arrow (journey) */
   .down{display:flex;flex-direction:column;align-items:center;color:var(--flow)}
   .down .v{width:2px;height:30px;background:var(--flow)}
   .down .a{font-size:15px;line-height:.6;margin-top:-2px;color:var(--flow)}
 
-  /* rangée des 3 branches + barre horizontale qui les relie à la racine */
+  /* 3-branch row + horizontal bar linking them to root */
   .branch{display:flex;align-items:flex-start;justify-content:center;gap:70px;position:relative;padding-top:44px}
   .branch::before{content:"";position:absolute;top:0;left:16.6%;right:16.6%;height:2px;background:var(--line-strong)}
   .limb{display:flex;flex-direction:column;align-items:center;gap:0;position:relative}
   .limb::before{content:"";position:absolute;top:-44px;width:2px;height:44px;background:var(--line-strong)}
 
-  /* colonne d'écrans empilés (le parcours vertical, lu de haut en bas) */
+  /* stacked-screens column (the vertical journey, top to bottom) */
   .stack{display:flex;flex-direction:column;align-items:center;gap:0;margin-top:14px}
 
-  /* ---- pont inter-colonnes (checkout → back-office) ---- */
+  /* ---- cross-column bridge (checkout → back-office) ---- */
   .bridge{position:absolute;z-index:5;pointer-events:none}
   .bridge svg{overflow:visible}
   .bridge .lab{fill:var(--muted);font:600 11px var(--sans);letter-spacing:.02em}
 
-  /* petite note contextuelle discrète */
+  /* small contextual note */
   .note{width:230px;text-align:left;font-size:11.5px;color:var(--muted);line-height:1.45;padding:10px 14px;
     border:1px dashed var(--line-strong);border-radius:12px;background:transparent}
   .note b{color:var(--ink);font-weight:600}
 
-  /* ---- footer minimal : juste le parcours principal en 1 ligne ---- */
+  /* ---- minimal footer: main journey on one line ---- */
   .legendbar{margin-top:70px;display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;
     color:var(--muted);font-size:12.5px;letter-spacing:.01em}
   .legendbar .p{display:inline-flex;align-items:center;gap:9px}
@@ -132,12 +132,12 @@
 </style>
 </head>
 <body>
-  <!-- PIN gate — dissuasif. ponytail: pas de crypto, juste un mur d'entrée -->
+  <!-- PIN gate — deterrent. ponytail: no crypto, just an entry wall -->
   <div id="gate" style="position:fixed;inset:0;z-index:100;background:#000;display:grid;place-items:center;font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
     <div style="text-align:center;max-width:320px;padding:0 24px">
       <svg viewBox="0 0 178 178" style="width:36px;height:36px;margin-bottom:24px" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M177.036 177.036H0V0H177.036V177.036ZM18.1603 79.4379H62.1975V97.5982H18.1603V158.876H79.4379V18.1603H18.1603V79.4379ZM97.5982 158.876H158.876V97.5982H114.769V79.4379H158.876V18.1603H97.5982V158.876Z" fill="#fff"/></svg>
-      <div style="color:#5a5a5f;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:20px">BLACKBOX Store · confidentiel</div>
-      <input id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="Code d'accès" maxlength="8"
+      <div style="color:#5a5a5f;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:20px">BLACKBOX Store · confidential</div>
+      <input id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="Access code" maxlength="8"
         style="width:100%;padding:14px 15px;background:#161617;border:1px solid rgba(255,255,255,.14);border-radius:12px;color:#fff;font-size:16px;text-align:center;letter-spacing:.3em;outline:none">
       <div id="pinerr" style="height:18px;margin-top:10px;color:#e0655f;font-size:12px"></div>
     </div>
@@ -145,7 +145,7 @@
   <script>
     (function(){
       var g=document.getElementById('gate'), i=document.getElementById('pin'), e=document.getElementById('pinerr');
-      function check(){ if(i.value==='14698'){ g.style.display='none'; } else { e.textContent='Code incorrect'; i.value=''; } }
+      function check(){ if(i.value==='14698'){ g.style.display='none'; } else { e.textContent='Wrong code'; i.value=''; } }
       i.addEventListener('keydown',function(ev){ if(ev.key==='Enter') check(); e.textContent=''; });
       i.focus();
     })();
@@ -154,14 +154,14 @@
   <div class="topbar">
     <div class="brand">
       <svg viewBox="0 0 178 178" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M177.036 177.036H0V0H177.036V177.036ZM18.1603 79.4379H62.1975V97.5982H18.1603V158.876H79.4379V18.1603H18.1603V79.4379ZM97.5982 158.876H158.876V97.5982H114.769V79.4379H158.876V18.1603H97.5982V158.876Z" fill="#fff"/></svg>
-      <div><span class="t">BLACKBOX STORE</span> <span class="s">Sitemap · parcours écrans</span></div>
+      <div><span class="t">BLACKBOX STORE</span> <span class="s">Sitemap · screen journey</span></div>
     </div>
     <div class="legend">
-      <b><span class="dot" style="background:var(--auth)"></span>Accès</b>
-      <b><span class="dot" style="background:var(--gerant)"></span>Gérant (B2B)</b>
+      <b><span class="dot" style="background:var(--auth)"></span>Access</b>
+      <b><span class="dot" style="background:var(--gerant)"></span>Manager (B2B)</b>
       <b><span class="dot" style="background:var(--office)"></span>Back-office</b>
-      <span class="hint">◆ écran clé · ① ordre du parcours · survol = détail · glisser / molette pour naviguer</span>
-      <span class="lang"><a href="index.html" class="on">FR</a><a href="index.en.html">EN</a></span>
+      <span class="hint">◆ key screen · ① journey order · hover = detail · drag / wheel to navigate</span>
+      <span class="lang"><a href="index.html">FR</a><a href="index.en.html" class="on">EN</a></span>
     </div>
   </div>
 
@@ -170,112 +170,112 @@
       <div class="tree">
        <div class="root">
 
-        <!-- ── TITRE + RACINE ── -->
+        <!-- ── TITLE + ROOT ── -->
         <div class="htitle">
           <div class="k">D-Studio · Architecture</div>
           <h1>BLACKBOX STORE</h1>
-          <p class="sub">Plateforme B2B de réassort salons. <b>Shopify est le moteur caché</b> (catalogue, taxes, paiement), <b>KHube orchestre</b> le métier salon. Les flèches ① → ⑦ montrent le <b>parcours réel</b> d'un écran à l'autre.</p>
+          <p class="sub">B2B salon-restocking platform. <b>Shopify is the hidden engine</b> (catalog, taxes, payment), <b>KHube orchestrates</b> the salon business logic. The ① → ⑦ arrows show the <b>real journey</b> from one screen to the next.</p>
         </div>
 
         <div class="vbar h60"></div>
 
-        <!-- ── 3 BRANCHES : A / B / C ── -->
+        <!-- ── 3 BRANCHES: A / B / C ── -->
         <div class="branch">
 
-          <!-- ========= LIMB A · AUTH (la porte) ========= -->
+          <!-- ========= LIMB A · ACCESS (the door) ========= -->
           <div class="limb" style="--z:var(--auth)">
-            <div class="zone-head"><div class="k">A</div><div class="n">Accès</div><div class="who">La porte · connexion par matricule</div></div>
+            <div class="zone-head"><div class="k">A</div><div class="n">Access</div><div class="who">The door · login by staff ID</div></div>
             <div class="stack">
-              <div class="node key" style="--z:var(--auth)"><span class="step">①</span><span class="id">A1</span><div class="ti">Login matricule</div><div class="de">Matricule + secret · 2 rôles : gérant / barber</div></div>
+              <div class="node key" style="--z:var(--auth)"><span class="step">①</span><span class="id">A1</span><div class="ti">ID login</div><div class="de">Staff ID + secret · 2 roles: manager / barber</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node" style="--z:var(--auth)"><span class="id">A2</span><div class="ti">États d'accès (refus)</div><div class="de">Inconnu · suspendu · salon fermé · sans droit</div></div>
+              <div class="node" style="--z:var(--auth)"><span class="id">A2</span><div class="ti">Access states (denied)</div><div class="de">Unknown · suspended · salon closed · no rights</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node key" style="--z:var(--auth)"><span class="step">②</span><span class="id">A3</span><div class="ti">1ʳᵉ connexion — mandat Stripe</div><div class="de">Mandat SEPA/carte obligatoire avant toute commande</div></div>
+              <div class="node key" style="--z:var(--auth)"><span class="step">②</span><span class="id">A3</span><div class="ti">First login — Stripe mandate</div><div class="de">SEPA/card mandate required before any order</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node key" style="--z:var(--auth)"><span class="id">A4</span><div class="ti">Activation barber</div><div class="de">Matricule + code invit + OTP SMS → accès scopé salon</div></div>
+              <div class="node key" style="--z:var(--auth)"><span class="id">A4</span><div class="ti">Barber activation</div><div class="de">Staff ID + invite code + SMS OTP → salon-scoped access</div></div>
             </div>
           </div>
 
-          <!-- ========= LIMB B · FRONT GÉRANT (le gros du parcours) ========= -->
+          <!-- ========= LIMB B · MANAGER FRONT (bulk of the journey) ========= -->
           <div class="limb" style="--z:var(--gerant)">
-            <div class="zone-head"><div class="k">B</div><div class="n">Front gérant</div><div class="who">14 écrans · la surface la plus soignée</div></div>
+            <div class="zone-head"><div class="k">B</div><div class="n">Manager front</div><div class="who">14 screens · the most polished surface</div></div>
             <div class="stack">
-              <div class="note">◇ <b>Sélecteur de salon actif</b> — présent partout · un panier <b>par salon</b> (scindé, jamais vidé)</div>
+              <div class="note">◇ <b>Active-salon selector</b> — present everywhere · one cart <b>per salon</b> (split, never emptied)</div>
               <div class="vbar flow h26"></div>
 
-              <div class="glabel">Contexte</div>
-              <div class="node key" style="--z:var(--gerant)"><span class="step">③</span><span class="id">B1</span><div class="ti">Mes salons (accueil)</div><div class="de">Salons rattachés + centre d'alertes</div></div>
+              <div class="glabel">Context</div>
+              <div class="node key" style="--z:var(--gerant)"><span class="step">③</span><span class="id">B1</span><div class="ti">My salons (home)</div><div class="de">Linked salons + alert center</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
 
-              <div class="glabel">Commande</div>
-              <div class="node key" style="--z:var(--gerant)"><span class="step">④</span><span class="id">B3</span><div class="ti">Catalogue B2B</div><div class="de">Consommables pro autorisés · salon affiché</div></div>
+              <div class="glabel">Order</div>
+              <div class="node key" style="--z:var(--gerant)"><span class="step">④</span><span class="id">B3</span><div class="ti">B2B catalog</div><div class="de">Authorized pro consumables · salon shown</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node" style="--z:var(--gerant)"><span class="id">B4</span><div class="ti">Fiche produit</div><div class="de">Conditionnement, prix pro, ajout panier</div></div>
+              <div class="node" style="--z:var(--gerant)"><span class="id">B4</span><div class="ti">Product page</div><div class="de">Packaging, pro price, add to cart</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node key" style="--z:var(--gerant)"><span class="step">⑤</span><span class="id">B5</span><div class="ti">Panier B2B</div><div class="de">Récap par salon · validation serveur</div></div>
+              <div class="node key" style="--z:var(--gerant)"><span class="step">⑤</span><span class="id">B5</span><div class="ti">B2B cart</div><div class="de">Recap per salon · server-side validation</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node key" style="--z:var(--gerant)"><span class="step">⑥</span><span class="id">B6</span><div class="ti">Checkout</div><div class="de">Adresses pré-remplies · mandat Stripe, zéro carte à saisir</div></div>
+              <div class="node key" style="--z:var(--gerant)"><span class="step">⑥</span><span class="id">B6</span><div class="ti">Checkout</div><div class="de">Pre-filled addresses · Stripe mandate, no card to enter</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node" style="--z:var(--gerant)" id="b7"><span class="step">⑦</span><span class="id">B7</span><div class="ti">Confirmation</div><div class="de">Salon + délai estimé + récap → déclenche le back-office</div></div>
+              <div class="node" style="--z:var(--gerant)" id="b7"><span class="step">⑦</span><span class="id">B7</span><div class="ti">Confirmation</div><div class="de">Salon + estimated ETA + recap → triggers back-office</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
 
-              <div class="glabel">Suivi</div>
-              <div class="node" style="--z:var(--gerant)"><span class="id">B8</span><div class="ti">Historique</div><div class="de">Filtre salon / période · statut, montant</div></div>
+              <div class="glabel">Tracking</div>
+              <div class="node" style="--z:var(--gerant)"><span class="id">B8</span><div class="ti">Order history</div><div class="de">Salon / period filter · status, amount</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node" style="--z:var(--gerant)"><span class="id">B9</span><div class="ti">Détail + tracking</div><div class="de">Lignes, statut fournisseur, facture PDF</div></div>
+              <div class="node" style="--z:var(--gerant)"><span class="id">B9</span><div class="ti">Detail + tracking</div><div class="de">Line items, supplier status, PDF invoice</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node key" style="--z:var(--gerant)"><span class="id">B10</span><div class="ti">Réassort 1 clic</div><div class="de">Réitérer une commande + réassort suggéré</div></div>
+              <div class="node key" style="--z:var(--gerant)"><span class="id">B10</span><div class="ti">1-click reorder</div><div class="de">Repeat an order + suggested restock</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node" style="--z:var(--gerant)"><span class="id">B11</span><div class="ti">SAV / retour / avoir</div><div class="de">Retour partiel par ligne · total = tout coché</div></div>
+              <div class="node" style="--z:var(--gerant)"><span class="id">B11</span><div class="ti">Returns / refunds</div><div class="de">Partial return per line · full = all checked</div></div>
 
-              <div class="glabel">Compte &amp; équipe</div>
-              <div class="node" style="--z:var(--gerant)"><span class="id">B12</span><div class="ti">Mon compte</div><div class="de">Mandat · factures · adresses salon</div></div>
+              <div class="glabel">Account &amp; team</div>
+              <div class="node" style="--z:var(--gerant)"><span class="id">B12</span><div class="ti">My account</div><div class="de">Mandate · invoices · salon addresses</div></div>
               <div class="vbar flow h26"></div>
-              <div class="node key" style="--z:var(--gerant)"><span class="id">B16</span><div class="ti">Mon équipe</div><div class="de">Invite ses barbers · rattache aux salons</div></div>
+              <div class="node key" style="--z:var(--gerant)"><span class="id">B16</span><div class="ti">My team</div><div class="de">Invite barbers · assign to salons</div></div>
 
-              <div class="glabel">Retrait client · pont phygital</div>
-              <div class="node key" style="--z:var(--gerant)"><span class="id">B14</span><div class="ti">Colis à remettre</div><div class="de">Capsule / Cosmétique arrivés au salon</div></div>
+              <div class="glabel">Customer pickup · phygital bridge</div>
+              <div class="node key" style="--z:var(--gerant)"><span class="id">B14</span><div class="ti">Parcels to hand over</div><div class="de">Capsule / Cosmetics arrived at the salon</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node" style="--z:var(--gerant)"><span class="id">B15</span><div class="ti">Remise colis</div><div class="de">Vérif code → « remis » → notif client (gérant ou barber)</div></div>
+              <div class="node" style="--z:var(--gerant)"><span class="id">B15</span><div class="ti">Hand-over</div><div class="de">Verify code → "handed over" → notify customer (manager or barber)</div></div>
             </div>
           </div>
 
           <!-- ========= LIMB C · BACK-OFFICE (D-Studio) ========= -->
           <div class="limb" style="--z:var(--office)">
-            <div class="zone-head"><div class="k">C</div><div class="n">Back-office</div><div class="who">9 écrans · équipe D-Studio, interne</div></div>
+            <div class="zone-head"><div class="k">C</div><div class="n">Back-office</div><div class="who">9 screens · D-Studio team, internal</div></div>
             <div class="stack">
-              <div class="note" id="c-in">↳ Reçoit les commandes validées du <b>parcours gérant</b> (après ⑦)</div>
+              <div class="note" id="c-in">↳ Receives validated orders from the <b>manager journey</b> (after ⑦)</div>
               <div class="vbar flow h26"></div>
 
-              <div class="glabel">Fournisseurs &amp; dropshipping</div>
-              <div class="node" style="--z:var(--office)"><span class="id">C4</span><div class="ti">Gestion fournisseurs</div><div class="de">Mode (API/email/manuel), credentials, SLA</div></div>
+              <div class="glabel">Suppliers &amp; dropshipping</div>
+              <div class="node" style="--z:var(--office)"><span class="id">C4</span><div class="ti">Supplier management</div><div class="de">Mode (API/email/manual), credentials, SLA</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node key" style="--z:var(--office)"><span class="id">C5</span><div class="ti">Mapping produit ↔ fournisseur</div><div class="de">Obligatoire avant publication Store</div></div>
+              <div class="node key" style="--z:var(--office)"><span class="id">C5</span><div class="ti">Product ↔ supplier mapping</div><div class="de">Required before Store publication</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node key" style="--z:var(--office)"><span class="id">C6</span><div class="ti">Commandes fournisseurs</div><div class="de">State machine statuts · tracking · relance</div></div>
+              <div class="node key" style="--z:var(--office)"><span class="id">C6</span><div class="ti">Supplier orders</div><div class="de">Status state machine · tracking · follow-up</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node key" style="--z:var(--office)"><span class="id">C7</span><div class="ti">Dashboard « à traiter »</div><div class="de">Erreurs, ruptures, mapping manquant</div></div>
+              <div class="node key" style="--z:var(--office)"><span class="id">C7</span><div class="ti">"To handle" dashboard</div><div class="de">Errors, stock-outs, missing mapping</div></div>
 
-              <div class="glabel">Paiement &amp; recouvrement</div>
-              <div class="node key" style="--z:var(--office)"><span class="id">C8</span><div class="ti">Prélèvements Stripe</div><div class="de">Mandats · réconciliation commandes</div></div>
+              <div class="glabel">Payment &amp; collection</div>
+              <div class="node key" style="--z:var(--office)"><span class="id">C8</span><div class="ti">Stripe collections</div><div class="de">Mandates · order reconciliation</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node" style="--z:var(--office)"><span class="id">C9</span><div class="ti">Détail mandat / franchisé</div><div class="de">1 franchisé = 1 client Stripe, N salons</div></div>
+              <div class="node" style="--z:var(--office)"><span class="id">C9</span><div class="ti">Mandate / franchisee detail</div><div class="de">1 franchisee = 1 Stripe customer, N salons</div></div>
 
-              <div class="glabel">Reporting &amp; système</div>
-              <div class="node" style="--z:var(--office)"><span class="id">C10</span><div class="ti">Dashboards + exports</div><div class="de">Par salon · états · paiements · CSV</div></div>
+              <div class="glabel">Reporting &amp; system</div>
+              <div class="node" style="--z:var(--office)"><span class="id">C10</span><div class="ti">Dashboards + exports</div><div class="de">Per salon · states · payments · CSV</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node" style="--z:var(--office)"><span class="id">C12</span><div class="ti">Logs / audit</div><div class="de">Journal des mutations back-office</div></div>
+              <div class="node" style="--z:var(--office)"><span class="id">C12</span><div class="ti">Logs / audit</div><div class="de">Back-office mutation journal</div></div>
               <div class="down"><div class="v"></div><div class="a">▼</div></div>
-              <div class="node" style="--z:var(--office)"><span class="id">C13</span><div class="ti">Monitoring intégrations</div><div class="de">Webhooks Shopify / Stripe / fournisseurs</div></div>
+              <div class="node" style="--z:var(--office)"><span class="id">C13</span><div class="ti">Integrations monitoring</div><div class="de">Shopify / Stripe / supplier webhooks</div></div>
             </div>
           </div>
 
         </div>
 
-        <!-- ── PONT B7 → C : dessiné en SVG, recalculé au zoom/pan ── -->
+        <!-- ── BRIDGE B7 → C: drawn in SVG, recomputed on zoom/pan ── -->
         <svg class="bridge" id="bridge" xmlns="http://www.w3.org/2000/svg"></svg>
 
-        <!-- ── récap parcours en 1 ligne (remplace les 3 pavés de doc) ── -->
+        <!-- ── one-line journey recap (replaces the 3 dense doc panels) ── -->
         <div class="legendbar">
           <span class="p"><span class="c">A1</span></span><span class="ar">→</span>
           <span class="p"><span class="c">A3</span></span><span class="ar">→</span>
@@ -285,7 +285,7 @@
           <span class="p"><span class="c">B6</span></span><span class="ar">→</span>
           <span class="p"><span class="c">B7</span></span><span class="ar">→</span>
           <span class="p"><span class="c">C6</span></span>
-          <span style="color:var(--dim);margin-left:8px">le chemin d'une commande, bout en bout</span>
+          <span style="color:var(--dim);margin-left:8px">an order's path, end to end</span>
         </div>
 
         <div class="foot-brand">
@@ -301,7 +301,7 @@
   <div class="zc">
     <button id="zin" title="Zoom +">+</button>
     <button id="zout" title="Zoom −">−</button>
-    <button id="zreset" title="Réinitialiser" style="font-size:12px">⤢</button>
+    <button id="zreset" title="Reset" style="font-size:12px">⤢</button>
   </div>
 
 <script>
@@ -312,11 +312,10 @@
   let scale=1, tx=0, ty=0, min=.3, max=2;
   function apply(){ world.style.transform=`translate3d(${tx}px,${ty}px,0) scale(${scale})`; }
 
-  // pont B7→C : ligne courbe dans le repère #world (donc suit le transform sans recalcul)
+  // bridge B7→C: curved line in the #world frame (so it follows the transform without recompute)
   function drawBridge(){
     const wr=world.getBoundingClientRect();
     const a=b7.getBoundingClientRect(), c=cin.getBoundingClientRect();
-    // coords en espace non-scalé
     const x1=(a.right-wr.left)/scale, y1=(a.top+a.height/2-wr.top)/scale;
     const x2=(c.left-wr.left)/scale,  y2=(c.top+c.height/2-wr.top)/scale;
     const mx=(x1+x2)/2;
@@ -327,7 +326,7 @@
         <path d="M0,0 L7,3 L0,6 Z" fill="rgba(255,255,255,.45)"/></marker></defs>
       <path d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2-8},${y2}"
         fill="none" stroke="rgba(255,255,255,.32)" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#ah)"/>
-      <text x="${mx}" y="${(y1+y2)/2-9}" text-anchor="middle" class="lab">commande validée</text>`;
+      <text x="${mx}" y="${(y1+y2)/2-9}" text-anchor="middle" class="lab">validated order</text>`;
   }
 
   let dragging=false, sx=0, sy=0, ox=0, oy=0;
@@ -345,16 +344,14 @@
   document.getElementById('zin').onclick=()=>zoomAt(1.15);
   document.getElementById('zout').onclick=()=>zoomAt(1/1.15);
 
-  // au chargement : cadre lisible (pas fit-to-tiny), centré horizontalement, montre le haut de l'arbre
   function reset(){
     drawBridge();
     const cw=world.scrollWidth, vw=stage.clientWidth;
-    scale=Math.min(1, Math.max(min, (vw-120)/cw));   // assez zoomé pour lire, sans déborder
+    scale=Math.min(1, Math.max(min, (vw-120)/cw));
     tx=(vw - cw*scale)/2; ty=20;
     apply();
   }
   document.getElementById('zreset').onclick=reset;
-  // 2 passes : le layout se stabilise après le 1er paint (fonts, wrap)
   requestAnimationFrame(()=>{ drawBridge(); reset(); });
   window.addEventListener('resize', reset);
 })();
